@@ -60,24 +60,26 @@
     </main>
 
     <script>
-        // Animated mesh gradient — ported from SwiftUI MeshFlowContent
-        // Uses Catmull-Rom bicubic interpolation for C1 continuity (no visible cell seams)
-        // Position warping via smooth displacement field
+        // Animated mesh gradient — 8x8 grid experiment
+        // Ported from SwiftUI MeshFlowContent aesthetic, scaled up for finer granularity
+        // Catmull-Rom bicubic interpolation for C1 continuity
         (function () {
             var canvas = document.getElementById('mesh-bg');
             var ctx = canvas.getContext('2d');
 
-            // Offscreen render resolution — upscaled with browser's smooth interpolation
-            var RENDER_SIZE = 192;
+            var GRID = 6;
+            var SPANS = GRID - 1; // 5
+            var TOTAL = GRID * GRID; // 36
+
+            var RENDER_SIZE = 224;
             var offscreen = document.createElement('canvas');
             offscreen.width = RENDER_SIZE;
             offscreen.height = RENDER_SIZE;
             var offCtx = offscreen.getContext('2d');
             var imageData = offCtx.createImageData(RENDER_SIZE, RENDER_SIZE);
 
-            // Reusable displacement arrays
-            var dispX = new Float32Array(16);
-            var dispY = new Float32Array(16);
+            var dispX = new Float32Array(TOTAL);
+            var dispY = new Float32Array(TOTAL);
 
             function resize() {
                 canvas.width = window.innerWidth;
@@ -86,8 +88,7 @@
                 ctx.imageSmoothingQuality = 'high';
             }
 
-            // --- Catmull-Rom bicubic interpolation ---
-            // C1 continuous across the entire grid — no visible cell boundaries
+            // --- Catmull-Rom bicubic interpolation (grid-size agnostic) ---
             function catmullRom(p0, p1, p2, p3, t) {
                 var t2 = t * t, t3 = t2 * t;
                 return 0.5 * (
@@ -98,66 +99,132 @@
                 );
             }
 
-            // Sample a 4x4 flat grid at normalized position (nx, ny) in [0,1]
-            // Uses separable Catmull-Rom: interpolate 4 rows along x, then combine along y
             function sampleGrid(grid, nx, ny) {
-                var sx = nx * 3, sy = ny * 3;
-                var ix = Math.min(2, Math.max(0, Math.floor(sx)));
-                var iy = Math.min(2, Math.max(0, Math.floor(sy)));
+                var sx = nx * SPANS, sy = ny * SPANS;
+                var ix = Math.min(SPANS - 1, Math.max(0, Math.floor(sx)));
+                var iy = Math.min(SPANS - 1, Math.max(0, Math.floor(sy)));
                 var tx = sx - ix, ty = sy - iy;
 
-                // 4 neighbor indices with boundary clamping
                 var c0 = Math.max(0, ix - 1), c1 = ix;
-                var c2 = Math.min(3, ix + 1), c3 = Math.min(3, ix + 2);
+                var c2 = Math.min(GRID - 1, ix + 1), c3 = Math.min(GRID - 1, ix + 2);
                 var r0 = Math.max(0, iy - 1), r1 = iy;
-                var r2 = Math.min(3, iy + 1), r3 = Math.min(3, iy + 2);
+                var r2 = Math.min(GRID - 1, iy + 1), r3 = Math.min(GRID - 1, iy + 2);
 
-                // Interpolate each row along x, then combine along y
-                var v0 = catmullRom(grid[r0 * 4 + c0], grid[r0 * 4 + c1], grid[r0 * 4 + c2], grid[r0 * 4 + c3], tx);
-                var v1 = catmullRom(grid[r1 * 4 + c0], grid[r1 * 4 + c1], grid[r1 * 4 + c2], grid[r1 * 4 + c3], tx);
-                var v2 = catmullRom(grid[r2 * 4 + c0], grid[r2 * 4 + c1], grid[r2 * 4 + c2], grid[r2 * 4 + c3], tx);
-                var v3 = catmullRom(grid[r3 * 4 + c0], grid[r3 * 4 + c1], grid[r3 * 4 + c2], grid[r3 * 4 + c3], tx);
+                var v0 = catmullRom(grid[r0 * GRID + c0], grid[r0 * GRID + c1], grid[r0 * GRID + c2], grid[r0 * GRID + c3], tx);
+                var v1 = catmullRom(grid[r1 * GRID + c0], grid[r1 * GRID + c1], grid[r1 * GRID + c2], grid[r1 * GRID + c3], tx);
+                var v2 = catmullRom(grid[r2 * GRID + c0], grid[r2 * GRID + c1], grid[r2 * GRID + c2], grid[r2 * GRID + c3], tx);
+                var v3 = catmullRom(grid[r3 * GRID + c0], grid[r3 * GRID + c1], grid[r3 * GRID + c2], grid[r3 * GRID + c3], tx);
 
                 return catmullRom(v0, v1, v2, v3, ty);
             }
 
-            // --- SwiftUI MeshFlowContent control points (exact port) ---
+            // --- Baked-in jitter: breaks the regular grid ---
+            // ±0.02 to ±0.04 offsets. Corners pinned, edges only along their axis.
+            var JITTER = [
+                // Row 0 (top edge — x jitter only)
+                [0,0],       [.015,0],    [-.025,0],   [.02,0],     [-.015,0],   [0,0],
+                // Row 1
+                [0,.015],    [.035,-.025],[-.02,.03],   [.025,-.02], [-.03,.025], [0,-.01],
+                // Row 2
+                [0,-.02],    [-.025,.035],[.04,-.015],  [-.03,.025], [.02,-.03],  [0,.02],
+                // Row 3
+                [0,.025],    [.03,.02],   [-.035,-.03], [.02,.035],  [-.025,-.015],[0,-.02],
+                // Row 4
+                [0,-.015],   [-.02,.03],  [.03,-.025],  [-.035,.02], [.025,.03],  [0,.015],
+                // Row 5 (bottom edge — x jitter only)
+                [0,0],       [-.02,0],    [.015,0],    [-.025,0],   [.02,0],     [0,0],
+            ];
+
+            // --- Per-node personality: [ampX, ampY, freqX, freqY, phaseX, phaseY] ---
+            // 16 interior nodes, each with distinct character
+            var PERSONALITY = [
+                // Row 0 (top edge)
+                null, [0,0,.9,0,0,0], [0,0,1.15,0,0,0], [0,0,.8,0,0,0], [0,0,1.05,0,0,0], null,
+                // Row 1
+                [0,.010,0,1.0,0,0],
+                [.08,.03, 1.44, .65, 0, 2.1],   // fast X, slow Y — like original (1,1)
+                [.015,.015,.42, .38, 1.5, .9],   // nearly still
+                [.04,.07, .85, 1.55, 3.0, 0],   // fast Y, moderate X
+                [.06,.04, 1.25, .72, 1.8, 3.2], // fast X
+                [0,.008,0,.88,0,0],
+                // Row 2
+                [0,.012,0,1.1,0,0],
+                [.03,.06, .60, 1.30, 2.0, 0],   // slow X, fast Y
+                [.07,.07, 1.50,1.35, 0, 1.5],   // energetic both
+                [.02,.02, .45, .50, 2.8, 1.2],  // slow drifter
+                [.05,.03, 1.10, .58, .5, 2.5],  // moderate X, slow Y
+                [0,.010,0,.95,0,0],
+                // Row 3
+                [0,.009,0,.85,0,0],
+                [.04,.05, .75, 1.10, 0, 3.5],   // balanced moderate
+                [.01,.02, .35, .48, 1.2, 0],    // barely moving
+                [.08,.04, 1.60, .70, 2.5, 1.0], // very fast X
+                [.03,.08, .55, 1.65, 3.8, 0],   // very fast Y
+                [0,.012,0,1.05,0,0],
+                // Row 4
+                [0,.011,0,.92,0,0],
+                [.06,.02, 1.30, .45, 0, 2.8],   // fast X, barely Y
+                [.05,.06, .90, 1.20, 1.5, 0],   // balanced
+                [.02,.015,.40, .35, 3.2, 1.8],  // near-still
+                [.07,.05, 1.15, 1.00, 0, .6],   // energetic
+                [0,.009,0,1.12,0,0],
+                // Row 5 (bottom edge)
+                null, [0,0,1.0,0,0,0], [0,0,.85,0,0,0], [0,0,1.2,0,0,0], [0,0,.95,0,0,0], null,
+            ];
+
+            // --- 6x6 control points ---
             function getPoints(t) {
-                var amp = 0.12, ampSmall = 0.10;
-                return [
-                    [0.0, 0.0],
-                    [0.33 + 0.03 * Math.sin(t * 1.20), 0.0],
-                    [0.67 + 0.03 * Math.cos(t * 1.04), 0.0],
-                    [1.0, 0.0],
-                    [0.0, 0.33 + 0.02 * Math.sin(t * 1.12)],
-                    [0.33 + amp * Math.sin(t * 1.44), 0.33 + ampSmall * Math.cos(t * 1.84)],
-                    [0.67 + ampSmall * Math.cos(t * 1.28), 0.33 + amp * Math.sin(t * 1.60)],
-                    [1.0, 0.33 + 0.02 * Math.cos(t * 1.20)],
-                    [0.0, 0.67 + 0.02 * Math.cos(t * 1.04)],
-                    [0.33 + ampSmall * Math.cos(t * 1.68), 0.67 + ampSmall * Math.sin(t * 1.36)],
-                    [0.67 + amp * Math.sin(t * 1.52), 0.67 + ampSmall * Math.cos(t * 1.76)],
-                    [1.0, 0.67 + 0.02 * Math.sin(t * 1.28)],
-                    [0.0, 1.0],
-                    [0.33 + 0.03 * Math.cos(t * 1.12), 1.0],
-                    [0.67 + 0.03 * Math.sin(t * 1.36), 1.0],
-                    [1.0, 1.0],
-                ];
+                var points = new Array(TOTAL);
+                for (var r = 0; r < GRID; r++) {
+                    for (var c = 0; c < GRID; c++) {
+                        var i = r * GRID + c;
+                        var j = JITTER[i];
+                        var bx = c / SPANS + j[0];
+                        var by = r / SPANS + j[1];
+                        var dx = 0, dy = 0;
+
+                        var p = PERSONALITY[i];
+                        if (p !== null) {
+                            var onEdgeX = (c === 0 || c === SPANS);
+                            var onEdgeY = (r === 0 || r === SPANS);
+
+                            if (!onEdgeX && !onEdgeY) {
+                                dx = p[0] * Math.sin(t * p[2] + p[4]);
+                                dy = p[1] * Math.cos(t * p[3] + p[5]);
+                            } else if (!onEdgeX && onEdgeY) {
+                                dx = 0.015 * Math.sin(t * p[2]);
+                            } else if (onEdgeX && !onEdgeY) {
+                                dy = p[1] * Math.sin(t * p[3]);
+                            }
+                        }
+
+                        points[i] = [bx + dx, by + dy];
+                    }
+                }
+                return points;
             }
 
-            // --- SwiftUI MeshFlowContent animated grey values (exact port) ---
+            // --- 6x6 color grid: asymmetric clusters ---
+            // Active region upper-left, calm center, active pocket lower-right
             function getColors(t) {
-                var g1 = 0.911 + 0.030 * Math.sin(t * 0.96);
-                var g2 = 0.911 + 0.035 * Math.cos(t * 0.72);
-                var g3 = 0.911 + 0.025 * Math.sin(t * 0.88);
-                var g4 = 0.911 + 0.030 * Math.cos(t * 1.04);
-                var g5 = 0.911 + 0.028 * Math.sin(t * 0.80);
-                var g6 = 0.911 + 0.032 * Math.cos(t * 0.92);
-                var g7 = 0.911 + 0.027 * Math.sin(t * 1.00);
+                var g = new Array(14);
+                var amps =  [.030,.042,.020,.038,.048,.025,.035,.045,.022,.040,.032,.050,.028,.035];
+                var freqs = [.72, .95, 1.15,.58, .82, 1.35,.68, 1.05,.48, .78, 1.25,.62, .88, 1.42];
+                for (var i = 0; i < 14; i++) {
+                    g[i] = 0.911 + amps[i] * ((i & 1)
+                        ? Math.cos(t * freqs[i] + i * 1.1)
+                        : Math.sin(t * freqs[i] + i * 0.8));
+                }
+
+                var W = 1.0, S = 0.911;
                 return [
-                    g6, 1.0, 0.911, g5,
-                    1.0, g1, 1.0, g7,
-                    0.911, 1.0, g2, 1.0,
-                    1.0, g3, g4, 1.0,
+                    //       0      1      2      3      4      5
+                    /* 0 */ g[0],  g[1],  W,     S,     W,     S,
+                    /* 1 */ W,     g[2],  g[3],  W,     S,     g[4],
+                    /* 2 */ g[5],  W,     S,     g[6],  W,     S,
+                    /* 3 */ S,     W,     g[7],  W,     S,     W,
+                    /* 4 */ W,     S,     W,     g[8],  g[9],  g[10],
+                    /* 5 */ S,     W,     S,     g[11], W,     g[12],
                 ];
             }
 
@@ -168,11 +235,11 @@
                 var data = imageData.data;
                 var W = RENDER_SIZE, H = RENDER_SIZE;
 
-                // Build displacement grids: how much each point moved from regular grid
-                for (var i = 0; i < 16; i++) {
-                    var r = (i >> 2), c = (i & 3); // row = i/4, col = i%4
-                    dispX[i] = points[i][0] - c / 3;
-                    dispY[i] = points[i][1] - r / 3;
+                // Build displacement grids
+                for (var i = 0; i < TOTAL; i++) {
+                    var r = (i / GRID) | 0, c = i % GRID;
+                    dispX[i] = points[i][0] - c / SPANS;
+                    dispY[i] = points[i][1] - r / SPANS;
                 }
 
                 for (var py = 0; py < H; py++) {
@@ -180,23 +247,19 @@
                     for (var px = 0; px < W; px++) {
                         var nx = px / (W - 1);
 
-                        // Smooth displacement warp (Catmull-Rom interpolated)
+                        // Smooth displacement warp
                         var dx = sampleGrid(dispX, nx, ny);
                         var dy = sampleGrid(dispY, nx, ny);
 
-                        // Inverse warp: find where this pixel's color comes from
                         var wx = nx - dx;
                         var wy = ny - dy;
-                        // Clamp to valid range
                         if (wx < 0) wx = 0; else if (wx > 1) wx = 1;
                         if (wy < 0) wy = 0; else if (wy > 1) wy = 1;
 
-                        // Sample color at warped position (Catmull-Rom — C1 smooth)
                         var c = sampleGrid(colors, wx, wy);
-                        // Clamp — Catmull-Rom can slightly overshoot
                         if (c < 0) c = 0; else if (c > 1) c = 1;
 
-                        var grey = (c * 255 + 0.5) | 0; // fast round
+                        var grey = (c * 255 + 0.5) | 0;
                         var pi = (py * W + px) << 2;
                         data[pi] = grey;
                         data[pi + 1] = grey;
