@@ -3,19 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sanity LLC</title>
+    <title>Sanity</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            min-height: 100vh;
+            color: #1a1a1a;
+        }
+        #mesh-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 0;
+        }
+        main {
+            position: relative;
+            z-index: 1;
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            background: #fafafa;
-            color: #1a1a1a;
-        }
-        main {
             text-align: center;
             padding: 2rem;
         }
@@ -38,12 +48,172 @@
     </style>
 </head>
 <body>
+    <canvas id="mesh-bg"></canvas>
     <main>
-        <img src="logo.png" alt="Sanity logo" width="120" height="120" style="border-radius: 24px; margin-bottom: 1.5rem;">
-        <h1>Sanity LLC</h1>
-        <p>Sanity LLC is a technology company.</p>
-        <p>Contact: <a href="mailto:founder@sanity-app.com">founder@sanity-app.com</a></p>
-        <footer>&copy; 2026 Sanity LLC</footer>
+        <div>
+            <img src="logo.png" alt="Sanity logo" width="120" height="120" style="border-radius: 24px; margin-bottom: 1.5rem;">
+            <h1>Sanity</h1>
+            <p>Restaurant health inspection data, reimagined for consumers.</p>
+            <p>Contact: <a href="mailto:founder@sanity-app.com">founder@sanity-app.com</a></p>
+            <footer>&copy; 2026 Sanity LLC</footer>
+        </div>
     </main>
+
+    <script>
+        // Animated mesh gradient — ported from SwiftUI MeshFlowContent
+        // Uses Catmull-Rom bicubic interpolation for C1 continuity (no visible cell seams)
+        // Position warping via smooth displacement field
+        (function () {
+            var canvas = document.getElementById('mesh-bg');
+            var ctx = canvas.getContext('2d');
+
+            // Offscreen render resolution — upscaled with browser's smooth interpolation
+            var RENDER_SIZE = 192;
+            var offscreen = document.createElement('canvas');
+            offscreen.width = RENDER_SIZE;
+            offscreen.height = RENDER_SIZE;
+            var offCtx = offscreen.getContext('2d');
+            var imageData = offCtx.createImageData(RENDER_SIZE, RENDER_SIZE);
+
+            // Reusable displacement arrays
+            var dispX = new Float32Array(16);
+            var dispY = new Float32Array(16);
+
+            function resize() {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+                ctx.imageSmoothingEnabled = true;
+                ctx.imageSmoothingQuality = 'high';
+            }
+
+            // --- Catmull-Rom bicubic interpolation ---
+            // C1 continuous across the entire grid — no visible cell boundaries
+            function catmullRom(p0, p1, p2, p3, t) {
+                var t2 = t * t, t3 = t2 * t;
+                return 0.5 * (
+                    (-t3 + 2 * t2 - t) * p0 +
+                    (3 * t3 - 5 * t2 + 2) * p1 +
+                    (-3 * t3 + 4 * t2 + t) * p2 +
+                    (t3 - t2) * p3
+                );
+            }
+
+            // Sample a 4x4 flat grid at normalized position (nx, ny) in [0,1]
+            // Uses separable Catmull-Rom: interpolate 4 rows along x, then combine along y
+            function sampleGrid(grid, nx, ny) {
+                var sx = nx * 3, sy = ny * 3;
+                var ix = Math.min(2, Math.max(0, Math.floor(sx)));
+                var iy = Math.min(2, Math.max(0, Math.floor(sy)));
+                var tx = sx - ix, ty = sy - iy;
+
+                // 4 neighbor indices with boundary clamping
+                var c0 = Math.max(0, ix - 1), c1 = ix;
+                var c2 = Math.min(3, ix + 1), c3 = Math.min(3, ix + 2);
+                var r0 = Math.max(0, iy - 1), r1 = iy;
+                var r2 = Math.min(3, iy + 1), r3 = Math.min(3, iy + 2);
+
+                // Interpolate each row along x, then combine along y
+                var v0 = catmullRom(grid[r0 * 4 + c0], grid[r0 * 4 + c1], grid[r0 * 4 + c2], grid[r0 * 4 + c3], tx);
+                var v1 = catmullRom(grid[r1 * 4 + c0], grid[r1 * 4 + c1], grid[r1 * 4 + c2], grid[r1 * 4 + c3], tx);
+                var v2 = catmullRom(grid[r2 * 4 + c0], grid[r2 * 4 + c1], grid[r2 * 4 + c2], grid[r2 * 4 + c3], tx);
+                var v3 = catmullRom(grid[r3 * 4 + c0], grid[r3 * 4 + c1], grid[r3 * 4 + c2], grid[r3 * 4 + c3], tx);
+
+                return catmullRom(v0, v1, v2, v3, ty);
+            }
+
+            // --- SwiftUI MeshFlowContent control points (exact port) ---
+            function getPoints(t) {
+                var amp = 0.12, ampSmall = 0.10;
+                return [
+                    [0.0, 0.0],
+                    [0.33 + 0.03 * Math.sin(t * 1.20), 0.0],
+                    [0.67 + 0.03 * Math.cos(t * 1.04), 0.0],
+                    [1.0, 0.0],
+                    [0.0, 0.33 + 0.02 * Math.sin(t * 1.12)],
+                    [0.33 + amp * Math.sin(t * 1.44), 0.33 + ampSmall * Math.cos(t * 1.84)],
+                    [0.67 + ampSmall * Math.cos(t * 1.28), 0.33 + amp * Math.sin(t * 1.60)],
+                    [1.0, 0.33 + 0.02 * Math.cos(t * 1.20)],
+                    [0.0, 0.67 + 0.02 * Math.cos(t * 1.04)],
+                    [0.33 + ampSmall * Math.cos(t * 1.68), 0.67 + ampSmall * Math.sin(t * 1.36)],
+                    [0.67 + amp * Math.sin(t * 1.52), 0.67 + ampSmall * Math.cos(t * 1.76)],
+                    [1.0, 0.67 + 0.02 * Math.sin(t * 1.28)],
+                    [0.0, 1.0],
+                    [0.33 + 0.03 * Math.cos(t * 1.12), 1.0],
+                    [0.67 + 0.03 * Math.sin(t * 1.36), 1.0],
+                    [1.0, 1.0],
+                ];
+            }
+
+            // --- SwiftUI MeshFlowContent animated grey values (exact port) ---
+            function getColors(t) {
+                var g1 = 0.911 + 0.030 * Math.sin(t * 0.96);
+                var g2 = 0.911 + 0.035 * Math.cos(t * 0.72);
+                var g3 = 0.911 + 0.025 * Math.sin(t * 0.88);
+                var g4 = 0.911 + 0.030 * Math.cos(t * 1.04);
+                var g5 = 0.911 + 0.028 * Math.sin(t * 0.80);
+                var g6 = 0.911 + 0.032 * Math.cos(t * 0.92);
+                var g7 = 0.911 + 0.027 * Math.sin(t * 1.00);
+                return [
+                    g6, 1.0, 0.911, g5,
+                    1.0, g1, 1.0, g7,
+                    0.911, 1.0, g2, 1.0,
+                    1.0, g3, g4, 1.0,
+                ];
+            }
+
+            function render(time) {
+                var t = time / 1000;
+                var points = getPoints(t);
+                var colors = getColors(t);
+                var data = imageData.data;
+                var W = RENDER_SIZE, H = RENDER_SIZE;
+
+                // Build displacement grids: how much each point moved from regular grid
+                for (var i = 0; i < 16; i++) {
+                    var r = (i >> 2), c = (i & 3); // row = i/4, col = i%4
+                    dispX[i] = points[i][0] - c / 3;
+                    dispY[i] = points[i][1] - r / 3;
+                }
+
+                for (var py = 0; py < H; py++) {
+                    var ny = py / (H - 1);
+                    for (var px = 0; px < W; px++) {
+                        var nx = px / (W - 1);
+
+                        // Smooth displacement warp (Catmull-Rom interpolated)
+                        var dx = sampleGrid(dispX, nx, ny);
+                        var dy = sampleGrid(dispY, nx, ny);
+
+                        // Inverse warp: find where this pixel's color comes from
+                        var wx = nx - dx;
+                        var wy = ny - dy;
+                        // Clamp to valid range
+                        if (wx < 0) wx = 0; else if (wx > 1) wx = 1;
+                        if (wy < 0) wy = 0; else if (wy > 1) wy = 1;
+
+                        // Sample color at warped position (Catmull-Rom — C1 smooth)
+                        var c = sampleGrid(colors, wx, wy);
+                        // Clamp — Catmull-Rom can slightly overshoot
+                        if (c < 0) c = 0; else if (c > 1) c = 1;
+
+                        var grey = (c * 255 + 0.5) | 0; // fast round
+                        var pi = (py * W + px) << 2;
+                        data[pi] = grey;
+                        data[pi + 1] = grey;
+                        data[pi + 2] = grey;
+                        data[pi + 3] = 255;
+                    }
+                }
+
+                offCtx.putImageData(imageData, 0, 0);
+                ctx.drawImage(offscreen, 0, 0, canvas.width, canvas.height);
+                requestAnimationFrame(render);
+            }
+
+            window.addEventListener('resize', resize);
+            resize();
+            requestAnimationFrame(render);
+        })();
+    </script>
 </body>
 </html>
