@@ -473,7 +473,7 @@
 
         .dashboard-updated {
             text-align: center;
-            margin-top: 30px;
+            margin-top: 40px;
             font-size: 0.75rem;
             color: #808080;
         }
@@ -961,6 +961,8 @@
                     updatedEl.className = 'dashboard-updated';
                     updatedEl.textContent = 'Last Updated: ' + latest.toLocaleDateString('en-US', {
                         year: 'numeric', month: 'long', day: 'numeric'
+                    }) + ' at ' + latest.toLocaleTimeString('en-US', {
+                        hour: 'numeric', minute: '2-digit'
                     });
                     container.parentNode.appendChild(updatedEl);
                 }
