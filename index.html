@@ -77,6 +77,28 @@
         .nav-links a.active {
             color: #444;
         }
+        .nav-download-wrap {
+            position: relative;
+        }
+        .nav-links .nav-download {
+            font-weight: 500;
+        }
+        .nav-download-reveal {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: #4A86E8;
+            color: #fff;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            white-space: nowrap;
+            clip-path: circle(0px at 0px 0px);
+            transition: clip-path 0.15s ease-out;
+            pointer-events: none;
+        }
 
         /* --- Page content area --- */
         #page-area {
@@ -525,6 +547,10 @@
                 <li><a data-nav="faq">FAQ</a></li>
                 <li><a data-nav="contact">Contact</a></li>
                 <li><a data-nav="student">Student Discount</a></li>
+                <li class="nav-download-wrap">
+                    <a href="#" class="nav-download">Download</a>
+                    <span class="nav-download-reveal" aria-hidden="true">Download</span>
+                </li>
             </ul>
         </nav>
 
@@ -739,6 +765,48 @@
         })();
 
         // =============================================
+        // Download button — circle-reveal hover
+        // =============================================
+        (function () {
+            var wrap = document.querySelector('.nav-download-wrap');
+            var reveal = wrap && wrap.querySelector('.nav-download-reveal');
+            if (!wrap || !reveal) return;
+            var expandTimer = null;
+            var expanded = false;
+
+            wrap.addEventListener('mousemove', function (e) {
+                if (expanded) return;
+                var rect = reveal.getBoundingClientRect();
+                var x = e.clientX - rect.left;
+                var y = e.clientY - rect.top;
+                reveal.style.clipPath = 'circle(24px at ' + x + 'px ' + y + 'px)';
+            });
+
+            wrap.addEventListener('mouseenter', function () {
+                expanded = false;
+                reveal.style.transition = 'clip-path 0.15s ease-out';
+                expandTimer = setTimeout(function () {
+                    expanded = true;
+                    reveal.style.transition = 'clip-path 0.6s ease-out';
+                    reveal.style.clipPath = 'circle(150% at 50% 50%)';
+                }, 750);
+            });
+
+            wrap.addEventListener('mouseleave', function () {
+                if (expandTimer) {
+                    clearTimeout(expandTimer);
+                    expandTimer = null;
+                }
+                expanded = false;
+                reveal.style.transition = 'clip-path 0.15s ease-out';
+                var current = reveal.style.clipPath;
+                var match = current.match(/at (.+)\)/);
+                var pos = match ? match[1] : '0px 0px';
+                reveal.style.clipPath = 'circle(0px at ' + pos + ')';
+            });
+        })();
+
+        // =============================================
         // City Dashboard — live data from edge function
         // =============================================
         (function () {
@@ -841,6 +909,8 @@
 
                     var colorIndex = 0;
                     var cycleInterval = null;
+                    var expandTimer = null;
+                    var expanded = false;
 
                     function setColor(color) {
                         colorLayer.style.color = color;
@@ -850,6 +920,8 @@
 
                     tag.addEventListener('mouseenter', function () {
                         colorIndex = 0;
+                        expanded = false;
+                        colorLayer.style.transition = 'color 0.4s ease, clip-path 0.15s ease-out';
                         setColor(colors[0]);
                         if (colors.length > 1) {
                             cycleInterval = setInterval(function () {
@@ -857,9 +929,15 @@
                                 setColor(colors[colorIndex]);
                             }, 800);
                         }
+                        expandTimer = setTimeout(function () {
+                            expanded = true;
+                            colorLayer.style.transition = 'color 0.4s ease, clip-path 0.6s ease-out';
+                            colorLayer.style.clipPath = 'circle(150% at 50% 50%)';
+                        }, 1250);
                     });
 
                     tag.addEventListener('mousemove', function (e) {
+                        if (expanded) return;
                         var rect = tag.getBoundingClientRect();
                         var x = e.clientX - rect.left;
                         var y = e.clientY - rect.top;
@@ -871,6 +949,12 @@
                             clearInterval(cycleInterval);
                             cycleInterval = null;
                         }
+                        if (expandTimer) {
+                            clearTimeout(expandTimer);
+                            expandTimer = null;
+                        }
+                        expanded = false;
+                        colorLayer.style.transition = 'color 0.4s ease, clip-path 0.15s ease-out';
                         // Collapse circle at last known position
                         var current = colorLayer.style.clipPath;
                         var match = current.match(/at (.+)\)/);
