@@ -204,10 +204,27 @@
         .violation-tag {
             font-size: 0.65rem;
             color: #666;
+            position: relative;
+            overflow: hidden;
+            cursor: default;
         }
         .violation-tag .vcount {
             font-weight: 600;
             color: #444;
+        }
+        .vtag-color {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            clip-path: circle(0px at 0px 0px);
+            transition: color 0.4s ease, clip-path 0.15s ease-out;
+            pointer-events: none;
+        }
+        .vtag-color .vcount {
+            font-weight: 600;
+            transition: color 0.4s ease;
         }
 
         /* Info tooltip */
@@ -803,6 +820,66 @@
                 });
             }
 
+            var SEVERITY_COLORS = {
+                pests: ['#EB5757'],
+                rodents: ['#EB5757'],
+                mold: ['#EB5757'],
+                chemical: ['#F2994B', '#EB5757'],
+                improper_storage: ['#F2C94C', '#EB5757', '#F2994B'],
+                bacterial: ['#F2C94C', '#EB5757', '#F2994B'],
+                temperature: ['#F2C94C', '#EB5757', '#F2994B'],
+                documentation: ['#F2C94C', '#EB5757', '#F2994B']
+            };
+
+            function initViolationTagHovers() {
+                document.querySelectorAll('.violation-tag[data-vtype]').forEach(function (tag) {
+                    var vtype = tag.getAttribute('data-vtype');
+                    var colors = SEVERITY_COLORS[vtype];
+                    if (!colors) return;
+                    var colorLayer = tag.querySelector('.vtag-color');
+                    if (!colorLayer) return;
+
+                    var colorIndex = 0;
+                    var cycleInterval = null;
+
+                    function setColor(color) {
+                        colorLayer.style.color = color;
+                        var vc = colorLayer.querySelector('.vcount');
+                        if (vc) vc.style.color = color;
+                    }
+
+                    tag.addEventListener('mouseenter', function () {
+                        colorIndex = 0;
+                        setColor(colors[0]);
+                        if (colors.length > 1) {
+                            cycleInterval = setInterval(function () {
+                                colorIndex = (colorIndex + 1) % colors.length;
+                                setColor(colors[colorIndex]);
+                            }, 800);
+                        }
+                    });
+
+                    tag.addEventListener('mousemove', function (e) {
+                        var rect = tag.getBoundingClientRect();
+                        var x = e.clientX - rect.left;
+                        var y = e.clientY - rect.top;
+                        colorLayer.style.clipPath = 'circle(20px at ' + x + 'px ' + y + 'px)';
+                    });
+
+                    tag.addEventListener('mouseleave', function () {
+                        if (cycleInterval) {
+                            clearInterval(cycleInterval);
+                            cycleInterval = null;
+                        }
+                        // Collapse circle at last known position
+                        var current = colorLayer.style.clipPath;
+                        var match = current.match(/at (.+)\)/);
+                        var pos = match ? match[1] : '0px 0px';
+                        colorLayer.style.clipPath = 'circle(0px at ' + pos + ')';
+                    });
+                });
+            }
+
             function renderDashboard(cities) {
                 var container = document.getElementById('city-dashboard');
                 container.innerHTML = '';
@@ -823,8 +900,12 @@
                     var sorted = Object.keys(vc).sort(function (a, b) { return vc[b] - vc[a]; });
                     var tags = sorted.map(function (key) {
                         var label = VIOLATION_LABELS[key] || key;
-                        return '<span class="violation-tag"><span class="vcount">' +
-                            vc[key].toLocaleString() + '</span> ' + label + '</span>';
+                        var countStr = vc[key].toLocaleString();
+                        var innerHtml = '<span class="vcount">' + countStr + '</span> ' + label;
+                        return '<span class="violation-tag" data-vtype="' + key + '">' +
+                            innerHtml +
+                            '<span class="vtag-color" aria-hidden="true">' + innerHtml + '</span>' +
+                            '</span>';
                     }).join('');
 
                     // Info tooltip (SF Symbol info.circle.fill as inline SVG)
@@ -884,8 +965,9 @@
                     container.parentNode.appendChild(updatedEl);
                 }
 
-                // Wire up health bar hover interactions
+                // Wire up hover interactions
                 initHealthBarHovers();
+                initViolationTagHovers();
             }
 
             fetch(API_URL)
