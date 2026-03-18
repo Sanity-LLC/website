@@ -318,6 +318,17 @@
         .ghost-tile .ghost-cta a:hover {
             color: rgba(128, 128, 128, 0.7);
         }
+        .ghost-fade-wrap {
+            grid-column: 1 / -1;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 100%);
+            mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 100%);
+        }
+        .ghost-fade-wrap .ghost-tile {
+            padding-top: 10px;
+        }
 
         /* --- City request modal --- */
         .modal-backdrop {
@@ -495,7 +506,7 @@
 
         .dashboard-updated {
             text-align: center;
-            margin-top: 40px;
+            margin-top: 48px;
             font-size: 0.75rem;
             color: #808080;
         }
@@ -1031,6 +1042,17 @@
                     e.preventDefault();
                     openRequestModal();
                 });
+
+                // Faded ghost tiles (bottom row)
+                var fadeWrap = document.createElement('div');
+                fadeWrap.className = 'ghost-fade-wrap';
+                for (var gi = 0; gi < 2; gi++) {
+                    var fadedGhost = document.createElement('div');
+                    fadedGhost.className = 'ghost-tile';
+                    fadedGhost.innerHTML = '<span class="ghost-label">Coming Soon</span>';
+                    fadeWrap.appendChild(fadedGhost);
+                }
+                container.appendChild(fadeWrap);
 
                 // "Last Updated" label — outside the grid
                 var latest = null;
