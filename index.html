@@ -34,7 +34,7 @@
             display: flex;
             flex-direction: column;
             padding: 0 1.5rem;
-            padding-top: 30vh;
+            padding-top: 18vh;
         }
 
         /* --- Navigation (inside content column) --- */
@@ -42,7 +42,7 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 0 0 20px 0;
+            padding: 0 0 40px 0;
             flex-shrink: 0;
         }
         .nav-brand {
@@ -96,6 +96,10 @@
             opacity: 1;
             pointer-events: auto;
         }
+        .page.fading-out {
+            position: relative;
+            pointer-events: none;
+        }
         .page-inner {
             width: 100%;
         }
@@ -134,6 +138,10 @@
             border-radius: 12px;
             padding: 16px;
             border: 1px solid rgba(0, 0, 0, 0.04);
+            box-shadow: 0 0.7px 1.4px rgba(0, 0, 0, 0.07);
+        }
+        .city-tile:hover {
+            z-index: 1;
         }
         .city-tile h2 {
             margin-bottom: 2px;
@@ -147,12 +155,36 @@
             height: 6px;
             border-radius: 3px;
             display: flex;
-            overflow: hidden;
+            overflow: visible;
             margin-bottom: 12px;
+            position: relative;
         }
-        .health-bar span {
+        .health-bar > span {
             display: block;
             height: 100%;
+            position: relative;
+            transition: flex-grow 0.3s ease;
+            border-radius: 0;
+        }
+        .health-bar > span:first-child { border-radius: 3px 0 0 3px; }
+        .health-bar > span:last-child { border-radius: 0 3px 3px 0; }
+        .health-bar span .bar-tooltip {
+            display: none;
+            position: absolute;
+            bottom: calc(100% + 8px);
+            left: 50%;
+            transform: translateX(-50%);
+            background: #333;
+            color: #fff;
+            font-size: 0.65rem;
+            padding: 5px 10px;
+            border-radius: 6px;
+            white-space: nowrap;
+            pointer-events: none;
+            z-index: 20;
+        }
+        .health-bar span:hover .bar-tooltip {
+            display: block;
         }
         .hb-green { background: #219653; }
         .hb-yellow { background: #F2C94C; }
@@ -193,14 +225,8 @@
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            width: 14px;
-            height: 14px;
-            border-radius: 50%;
-            background: #ccc;
-            color: #fff;
-            font-size: 0.55rem;
-            font-weight: 700;
-            font-style: italic;
+            width: 12px;
+            height: 12px;
             cursor: default;
             flex-shrink: 0;
         }
@@ -224,6 +250,217 @@
             display: block;
         }
 
+        .ghost-tile {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            min-height: 100px;
+            border-radius: 12px;
+            border: 2px dashed rgba(128, 128, 128, 0.25);
+            background: transparent;
+            padding-bottom: 8px;
+        }
+        .ghost-tile .ghost-label {
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: rgba(128, 128, 128, 0.6);
+        }
+        .ghost-tile .ghost-cta {
+            font-size: 0.75rem;
+            color: rgba(128, 128, 128, 0.5);
+        }
+        .ghost-tile .ghost-cta a {
+            color: rgba(128, 128, 128, 0.5);
+            text-decoration: none;
+            cursor: pointer;
+        }
+        .ghost-tile .ghost-cta a:hover {
+            color: rgba(128, 128, 128, 0.7);
+        }
+
+        /* --- City request modal --- */
+        .modal-backdrop {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            z-index: 100;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal-backdrop.visible {
+            display: flex;
+        }
+        .modal-card {
+            background: #fff;
+            border-radius: 16px;
+            width: 90%;
+            max-width: 420px;
+            max-height: 90vh;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+        .modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 20px;
+            border-bottom: 1px solid #e5e5e5;
+            flex-shrink: 0;
+        }
+        .modal-header h2 {
+            font-size: 0.95rem;
+            font-weight: 600;
+            margin: 0;
+            flex: 1;
+            text-align: center;
+        }
+        .modal-header .modal-cancel {
+            font-size: 0.9rem;
+            color: #007AFF;
+            cursor: pointer;
+            background: none;
+            border: none;
+            font-family: inherit;
+            padding: 0;
+        }
+        .modal-header .modal-cancel-spacer {
+            width: 50px;
+        }
+        .modal-body {
+            padding: 20px;
+            overflow-y: auto;
+            flex: 1;
+        }
+        /* iOS CityRequestTextFieldStyle */
+        .modal-field-label {
+            display: block;
+            font-size: 0.75rem;
+            color: #8e8e93;
+            margin-bottom: 6px;
+        }
+        .modal-input {
+            display: block;
+            width: 100%;
+            padding: 12px 14px;
+            font-size: 15px;
+            font-family: inherit;
+            background: #f2f2f7;
+            border: 0.5px solid #c7c7cc;
+            border-radius: 10px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        .modal-input:focus {
+            border-color: #007AFF;
+        }
+        .modal-input::placeholder {
+            color: #c7c7cc;
+        }
+        .modal-city-label {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        .modal-section-header {
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        .modal-section-subtext {
+            font-size: 0.75rem;
+            color: #1a1a1a;
+            line-height: 1.5;
+            margin-bottom: 12px;
+        }
+        .modal-field-group {
+            margin-bottom: 12px;
+        }
+        .modal-field-footer {
+            font-size: 0.65rem;
+            color: #8e8e93;
+            margin-top: 6px;
+        }
+        .modal-contact-section {
+            margin-top: 24px;
+        }
+        .modal-submit-btn {
+            display: block;
+            width: 100%;
+            padding: 14px 0;
+            margin-top: 24px;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            font-family: inherit;
+            cursor: pointer;
+            border: none;
+            background: #1a1a1a;
+            color: #fff;
+            transition: opacity 0.2s;
+        }
+        .modal-submit-btn:hover {
+            opacity: 0.85;
+        }
+        .modal-submit-btn:disabled {
+            background: rgba(128, 128, 128, 0.5);
+            cursor: default;
+        }
+        .modal-info-blurb {
+            display: flex;
+            gap: 8px;
+            align-items: flex-start;
+            margin-top: 10px;
+        }
+        .modal-info-blurb svg {
+            flex-shrink: 0;
+            margin-top: 1px;
+        }
+        .modal-info-blurb p {
+            font-size: 0.7rem;
+            color: #8e8e93;
+            line-height: 1.5;
+            margin: 0;
+        }
+        .modal-validation-error {
+            font-size: 0.75rem;
+            color: #EB5757;
+            margin-top: 4px;
+        }
+        .modal-success {
+            text-align: center;
+            padding: 40px 20px;
+        }
+        .modal-success .checkmark-icon {
+            color: #219653;
+            font-size: 3rem;
+            margin-bottom: 12px;
+        }
+        .modal-success .success-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #1a1a1a;
+            margin-bottom: 4px;
+        }
+        .modal-success .success-subtitle {
+            font-size: 0.85rem;
+            color: #8e8e93;
+        }
+
+        .dashboard-updated {
+            text-align: center;
+            margin-top: 30px;
+            font-size: 0.75rem;
+            color: #808080;
+        }
+
         .dashboard-loading {
             color: #808080;
             font-size: 0.9rem;
@@ -233,6 +470,8 @@
         .site-footer {
             margin-top: 40px;
             padding: 20px 0;
+            opacity: 1;
+            transition: opacity 0.4s ease-in-out;
             font-size: 0.75rem;
             color: #aaa;
             display: flex;
@@ -266,8 +505,9 @@
             </a>
             <ul class="nav-links">
                 <li><a data-nav="about">About</a></li>
+                <li><a data-nav="faq">FAQ</a></li>
                 <li><a data-nav="contact">Contact</a></li>
-                <li><a data-nav="student">Student</a></li>
+                <li><a data-nav="student">Student Discount</a></li>
             </ul>
         </nav>
 
@@ -285,6 +525,22 @@
                     <h1>About Sanity</h1>
                     <p>City health department grading systems are designed for enforcement, not for consumers. A restaurant can have rats found during an inspection and still receive a passing grade.</p>
                     <p>Sanity re-evaluates the same raw inspection data through a consumer lens, applying its own deterministic severity rankings so you see what actually matters to you.</p>
+                </div>
+            </section>
+
+            <section data-page="faq" class="page">
+                <div class="page-inner">
+                    <h1>FAQ</h1>
+                    <h2>What is Sanity?</h2>
+                    <p>Sanity is a consumer-focused health inspection app. We take the same raw inspection data published by city health departments and re-evaluate it through a lens that actually matters to diners.</p>
+                    <h2>How is Sanity different from a city grade?</h2>
+                    <p>City grading systems are designed for enforcement, not for you. A restaurant can have rodents found during an inspection and still pass. Sanity applies its own severity rankings so you see what's actually important.</p>
+                    <h2>Which cities are supported?</h2>
+                    <p>We currently cover New York City, Boston, Seattle, Chicago, San Francisco, Austin, and Cambridge. More cities are on the way — you can request one from the dashboard.</p>
+                    <h2>Is my data private?</h2>
+                    <p>Yes. We don't sell your data or share it with third parties. See our Privacy Policy for details.</p>
+                    <h2>How much does it cost?</h2>
+                    <p>Pricing details will be announced closer to launch. We also offer a student discount for verified .edu email holders.</p>
                 </div>
             </section>
 
@@ -321,6 +577,56 @@
             </section>
         </div>
 
+        <!-- City request modal -->
+        <div class="modal-backdrop" id="request-modal">
+            <div class="modal-card">
+                <div id="modal-form-view">
+                    <div class="modal-header">
+                        <button class="modal-cancel" id="modal-cancel">Cancel</button>
+                        <h2>Request Support for a City</h2>
+                        <span class="modal-cancel-spacer"></span>
+                    </div>
+                    <div class="modal-body">
+                        <div class="modal-field-group">
+                            <div class="modal-city-label">What city would you like us to add?</div>
+                            <input type="text" class="modal-input" id="request-city" placeholder="ie. Austin, TX" autocapitalize="words">
+                        </div>
+
+                        <div class="modal-contact-section">
+                            <div class="modal-section-header">Get notified (optional)</div>
+                            <div class="modal-section-subtext">Share your contact info and we'll let you know when your city goes live. We won't contact you for anything else.</div>
+
+                            <div class="modal-field-group">
+                                <label class="modal-field-label" for="request-email">Email</label>
+                                <input type="email" class="modal-input" id="request-email" placeholder="email@example.com" autocapitalize="off" autocorrect="off">
+                            </div>
+
+                            <div class="modal-field-group">
+                                <label class="modal-field-label" for="request-phone">Phone</label>
+                                <input type="tel" class="modal-input" id="request-phone" placeholder="(555) 123-4567">
+                            </div>
+
+                            <div class="modal-field-footer">Message and data rates may apply. Message frequency varies.</div>
+                        </div>
+
+                        <div id="modal-validation-error" class="modal-validation-error" style="display:none;"></div>
+
+                        <button class="modal-submit-btn" id="modal-submit" disabled>Submit Request</button>
+
+                        <div class="modal-info-blurb">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="#8e8e93" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="12"/><text x="12" y="17" text-anchor="middle" font-size="14" font-weight="700" font-family="-apple-system,BlinkMacSystemFont,sans-serif" fill="#fff">i</text></svg>
+                            <p>We're actively working to expand Sanity to more cities. Building reliable health inspection support takes time &mdash; every city publishes data differently, and we want to get it right. Your request helps us prioritize what to build next.</p>
+                        </div>
+                    </div>
+                </div>
+                <div id="modal-success-view" class="modal-success" style="display:none;">
+                    <div class="checkmark-icon">&#10003;</div>
+                    <div class="success-title">Thanks for your request!</div>
+                    <div class="success-subtitle" id="success-city-text"></div>
+                </div>
+            </div>
+        </div>
+
         <div class="site-footer">
             <a data-nav="privacy">Privacy Policy</a>
             <a data-nav="terms">Terms of Service</a>
@@ -351,15 +657,22 @@
                 });
 
                 // Update page title
-                var titles = { home: 'Sanity', about: 'About — Sanity', contact: 'Contact — Sanity', privacy: 'Privacy Policy — Sanity', terms: 'Terms of Service — Sanity', student: 'Student Discount — Sanity' };
+                var titles = { home: 'Sanity', about: 'About — Sanity', faq: 'FAQ — Sanity', contact: 'Contact — Sanity', privacy: 'Privacy Policy — Sanity', terms: 'Terms of Service — Sanity', student: 'Student Discount — Sanity' };
                 document.title = titles[pageName] || 'Sanity';
 
-                // Fade out current
-                if (current) current.classList.remove('active');
+                // Fade out current + footer
+                var footer = document.querySelector('.site-footer');
+                if (current) {
+                    current.classList.add('fading-out');
+                    current.classList.remove('active');
+                }
+                if (footer) footer.style.opacity = '0';
 
-                // After fade out completes, fade in new
+                // After fade out completes, fade in new + footer
                 setTimeout(function () {
+                    if (current) current.classList.remove('fading-out');
                     target.classList.add('active');
+                    if (footer) footer.style.opacity = '1';
                     isNavigating = false;
                 }, FADE_DURATION);
 
@@ -459,6 +772,37 @@
                 return rest;
             }
 
+            var BAR_LABELS = {
+                green: 'places in good standing',
+                yellow: 'places with low severity violations',
+                orange: 'places with medium severity violations',
+                red: 'places with high or critical violations'
+            };
+
+            function healthBarSegment(cls, count, pct) {
+                if (count === 0) return '';
+                return '<span class="' + cls + '" style="flex-grow:' + pct.toFixed(1) + '" ' +
+                    'data-base="' + pct.toFixed(1) + '" data-pct="' + pct.toFixed(1) + '">' +
+                    '<span class="bar-tooltip">' + count.toLocaleString() + ' ' +
+                    BAR_LABELS[cls.replace('hb-', '')] + '</span></span>';
+            }
+
+            function initHealthBarHovers() {
+                document.querySelectorAll('.health-bar').forEach(function (bar) {
+                    var segments = bar.querySelectorAll('span[data-base]');
+                    segments.forEach(function (seg) {
+                        seg.addEventListener('mouseenter', function () {
+                            var pct = parseFloat(seg.getAttribute('data-pct'));
+                            if (pct >= 50) return; // already dominant, no expand
+                            seg.style.flexGrow = (pct * 1.8).toFixed(1);
+                        });
+                        seg.addEventListener('mouseleave', function () {
+                            seg.style.flexGrow = seg.getAttribute('data-base');
+                        });
+                    });
+                });
+            }
+
             function renderDashboard(cities) {
                 var container = document.getElementById('city-dashboard');
                 container.innerHTML = '';
@@ -469,10 +813,10 @@
                     var g = city.green_count, y = city.yellow_count;
                     var o = city.orange_count, r = city.red_count;
 
-                    var gPct = (g / total * 100).toFixed(1);
-                    var yPct = (y / total * 100).toFixed(1);
-                    var oPct = (o / total * 100).toFixed(1);
-                    var rPct = (r / total * 100).toFixed(1);
+                    var gPct = g / total * 100;
+                    var yPct = y / total * 100;
+                    var oPct = o / total * 100;
+                    var rPct = r / total * 100;
 
                     // Violation tags sorted by count descending
                     var vc = city.violation_counts || {};
@@ -483,10 +827,15 @@
                             vc[key].toLocaleString() + '</span> ' + label + '</span>';
                     }).join('');
 
-                    // Info tooltip
+                    // Info tooltip (SF Symbol info.circle.fill as inline SVG)
                     var infoHtml = '';
                     if (AREA_INFO[code]) {
-                        infoHtml = '<span class="info-icon">i<span class="tooltip">' + AREA_INFO[code] + '</span></span>';
+                        infoHtml = '<span class="info-icon">' +
+                            '<svg width="12" height="12" viewBox="0 0 24 24" fill="#ccc" xmlns="http://www.w3.org/2000/svg">' +
+                            '<circle cx="12" cy="12" r="12"/>' +
+                            '<text x="12" y="17" text-anchor="middle" font-size="14" font-weight="700" font-family="-apple-system,BlinkMacSystemFont,sans-serif" fill="#fff">i</text>' +
+                            '</svg>' +
+                            '<span class="tooltip">' + AREA_INFO[code] + '</span></span>';
                     }
 
                     var tile = document.createElement('div');
@@ -495,15 +844,48 @@
                         '<div class="city-header"><h2>' + name + '</h2>' + infoHtml + '</div>' +
                         '<div class="city-total">' + total.toLocaleString() + ' establishments</div>' +
                         '<div class="health-bar">' +
-                            '<span class="hb-green" style="width:' + gPct + '%"></span>' +
-                            '<span class="hb-yellow" style="width:' + yPct + '%"></span>' +
-                            '<span class="hb-orange" style="width:' + oPct + '%"></span>' +
-                            '<span class="hb-red" style="width:' + rPct + '%"></span>' +
+                            healthBarSegment('hb-green', g, gPct) +
+                            healthBarSegment('hb-yellow', y, yPct) +
+                            healthBarSegment('hb-orange', o, oPct) +
+                            healthBarSegment('hb-red', r, rPct) +
                         '</div>' +
                         '<div class="violations-header">Violations</div>' +
                         '<div class="violation-list">' + tags + '</div>';
                     container.appendChild(tile);
                 });
+
+                // Ghost "Coming Soon" tile
+                var ghost = document.createElement('div');
+                ghost.className = 'ghost-tile';
+                ghost.innerHTML = '<span class="ghost-label">Coming Soon</span>' +
+                    '<span class="ghost-cta">Don\'t see your city? <a id="open-request-modal">Request it here</a></span>';
+                container.appendChild(ghost);
+
+                // Wire up modal open
+                document.getElementById('open-request-modal').addEventListener('click', function (e) {
+                    e.preventDefault();
+                    openRequestModal();
+                });
+
+                // "Last Updated" label — outside the grid
+                var latest = null;
+                cities.forEach(function (city) {
+                    if (city.updated_at) {
+                        var d = new Date(city.updated_at);
+                        if (!latest || d > latest) latest = d;
+                    }
+                });
+                if (latest) {
+                    var updatedEl = document.createElement('p');
+                    updatedEl.className = 'dashboard-updated';
+                    updatedEl.textContent = 'Last Updated: ' + latest.toLocaleDateString('en-US', {
+                        year: 'numeric', month: 'long', day: 'numeric'
+                    });
+                    container.parentNode.appendChild(updatedEl);
+                }
+
+                // Wire up health bar hover interactions
+                initHealthBarHovers();
             }
 
             fetch(API_URL)
@@ -516,6 +898,139 @@
                     var container = document.getElementById('city-dashboard');
                     container.innerHTML = '<p class="dashboard-loading">Unable to load city data.</p>';
                 });
+        })();
+
+        // =============================================
+        // City Request Modal
+        // =============================================
+        var openRequestModal;
+        (function () {
+            var ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVtYWR1dWhhd3FiY2R2dGltbmpvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQ1MTAxMTAsImV4cCI6MjA3MDA4NjExMH0.4c5yRD8_gn9qbn483cbI7Pqukwhyei7e0evt8ELqWG0';
+            var SUBMIT_URL = 'https://emaduuhawqbcdvtimnjo.supabase.co/functions/v1/submit-form';
+
+            var modal = document.getElementById('request-modal');
+            var formView = document.getElementById('modal-form-view');
+            var successView = document.getElementById('modal-success-view');
+            var cityInput = document.getElementById('request-city');
+            var emailInput = document.getElementById('request-email');
+            var phoneInput = document.getElementById('request-phone');
+            var submitBtn = document.getElementById('modal-submit');
+            var cancelBtn = document.getElementById('modal-cancel');
+            var errorEl = document.getElementById('modal-validation-error');
+            var successCityText = document.getElementById('success-city-text');
+
+            function resetModal() {
+                formView.style.display = '';
+                successView.style.display = 'none';
+                cityInput.value = '';
+                emailInput.value = '';
+                phoneInput.value = '';
+                submitBtn.disabled = true;
+                submitBtn.textContent = 'Submit Request';
+                errorEl.style.display = 'none';
+                errorEl.textContent = '';
+            }
+
+            openRequestModal = function () {
+                resetModal();
+                modal.classList.add('visible');
+                cityInput.focus();
+            };
+
+            function closeModal() {
+                modal.classList.remove('visible');
+            }
+
+            // Phone auto-formatting: (XXX) XXX-XXXX
+            function formatPhone(input) {
+                var digits = input.replace(/\D/g, '').slice(0, 10);
+                if (digits.length === 0) return '';
+                if (digits.length <= 3) return '(' + digits;
+                if (digits.length <= 6) return '(' + digits.slice(0, 3) + ') ' + digits.slice(3);
+                return '(' + digits.slice(0, 3) + ') ' + digits.slice(3, 6) + '-' + digits.slice(6);
+            }
+
+            phoneInput.addEventListener('input', function () {
+                var pos = phoneInput.selectionStart;
+                var before = phoneInput.value;
+                phoneInput.value = formatPhone(phoneInput.value);
+                // Adjust cursor if formatting changed length
+                var diff = phoneInput.value.length - before.length;
+                phoneInput.setSelectionRange(pos + diff, pos + diff);
+            });
+
+            // Enable submit only when city is filled
+            cityInput.addEventListener('input', function () {
+                submitBtn.disabled = !cityInput.value.trim();
+                errorEl.style.display = 'none';
+            });
+
+            cancelBtn.addEventListener('click', closeModal);
+
+            // Close on backdrop click
+            modal.addEventListener('click', function (e) {
+                if (e.target === modal) closeModal();
+            });
+
+            // Close on Escape
+            document.addEventListener('keydown', function (e) {
+                if (e.key === 'Escape' && modal.classList.contains('visible')) closeModal();
+            });
+
+            function validate() {
+                var email = emailInput.value.trim();
+                if (email && (!email.includes('@') || !email.includes('.'))) {
+                    errorEl.textContent = 'Please enter a valid email address.';
+                    errorEl.style.display = 'block';
+                    return false;
+                }
+                var phoneDigits = phoneInput.value.replace(/\D/g, '');
+                if (phoneDigits.length > 0 && phoneDigits.length !== 10) {
+                    errorEl.textContent = 'Please enter a 10-digit phone number.';
+                    errorEl.style.display = 'block';
+                    return false;
+                }
+                errorEl.style.display = 'none';
+                return true;
+            }
+
+            submitBtn.addEventListener('click', function () {
+                var cityRaw = cityInput.value.trim();
+                if (!cityRaw) return;
+                if (!validate()) return;
+
+                submitBtn.disabled = true;
+                submitBtn.textContent = 'Submitting...';
+
+                // Parse city, state from comma-separated input
+                var parts = cityRaw.split(',').map(function (s) { return s.trim(); });
+                var content = { city: parts[0] };
+                if (parts.length > 1 && parts[1]) content.state = parts[1];
+                var email = emailInput.value.trim();
+                if (email) content.email = email;
+                var phoneDigits = phoneInput.value.replace(/\D/g, '');
+                if (phoneDigits) content.phone = phoneDigits;
+
+                fetch(SUBMIT_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + ANON_KEY
+                    },
+                    body: JSON.stringify({ type: 'city_request', content: content })
+                })
+                .then(function (res) {
+                    if (!res.ok) throw new Error('Request failed');
+                    successCityText.textContent = "We'll consider adding " + cityRaw + " in a future update.";
+                    formView.style.display = 'none';
+                    successView.style.display = '';
+                    setTimeout(closeModal, 2000);
+                })
+                .catch(function () {
+                    submitBtn.textContent = 'Error — try again';
+                    submitBtn.disabled = false;
+                });
+            });
         })();
 
         // =============================================
