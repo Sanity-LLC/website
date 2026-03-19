@@ -517,6 +517,89 @@
             color: #8e8e93;
         }
 
+        /* --- Support form (inline) --- */
+        .support-form {
+            margin-top: 1.5rem;
+        }
+        .support-form .modal-input {
+            background: #fff;
+        }
+        .support-select {
+            appearance: none;
+            -webkit-appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%238e8e93' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 14px center;
+            padding-right: 36px;
+            cursor: pointer;
+            color: #1a1a1a;
+        }
+        .support-select option[value=""] {
+            color: #c7c7cc;
+        }
+        .support-textarea {
+            resize: vertical;
+            min-height: 120px;
+            line-height: 1.5;
+        }
+        .support-required {
+            color: #EB5757;
+            font-weight: 400;
+        }
+        .support-success {
+            text-align: center;
+            padding: 40px 0;
+        }
+        .support-success-icon {
+            color: #219653;
+            font-size: 3rem;
+            margin-bottom: 12px;
+        }
+        .support-success-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #1a1a1a;
+            margin-bottom: 4px;
+        }
+        .support-success-subtitle {
+            font-size: 0.85rem;
+            color: #8e8e93;
+            margin-bottom: 24px;
+        }
+        .support-send-another {
+            display: inline-block;
+            padding: 10px 24px;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            font-family: inherit;
+            cursor: pointer;
+            border: 1px solid #c7c7cc;
+            background: transparent;
+            color: #007AFF;
+            transition: background 0.2s;
+        }
+        .support-send-another:hover {
+            background: #f2f2f7;
+        }
+        .support-fallback {
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid #e5e5e5;
+            text-align: center;
+        }
+        .support-fallback p {
+            font-size: 0.85rem;
+            color: #8e8e93;
+        }
+        .support-fallback a {
+            color: #007AFF;
+            text-decoration: none;
+        }
+        .support-fallback a:hover {
+            text-decoration: underline;
+        }
+
         .dashboard-updated {
             text-align: center;
             margin-top: 48px;
@@ -740,9 +823,47 @@
 
             <section data-page="contact" class="page">
                 <div class="page-inner">
-                    <h1>Support</h1>
-                    <p>Have questions, feedback, or want to request a city?</p>
-                    <p><a href="mailto:support@sanity-app.com">support@sanity-app.com</a></p>
+                    <p>Have questions, feedback, or ran into an issue? Fill out the form below and we'll get back to you.</p>
+
+                    <div id="support-form-view">
+                        <div class="support-form">
+                            <div class="modal-field-group">
+                                <label class="modal-field-label" for="support-category">Category</label>
+                                <select class="modal-input support-select" id="support-category">
+                                    <option value="" disabled selected>Select a category</option>
+                                    <option value="bug_report">Bug Report</option>
+                                    <option value="feature_request">Feature Request</option>
+                                    <option value="general_question">General Question</option>
+                                    <option value="account_issue">Account Issue</option>
+                                </select>
+                            </div>
+
+                            <div class="modal-field-group">
+                                <label class="modal-field-label" for="support-email">Email <span class="support-required">*</span></label>
+                                <input type="email" class="modal-input" id="support-email" placeholder="email@example.com" autocapitalize="off" autocorrect="off">
+                            </div>
+
+                            <div class="modal-field-group">
+                                <label class="modal-field-label" for="support-message">Message <span class="support-required">*</span></label>
+                                <textarea class="modal-input support-textarea" id="support-message" placeholder="Describe your issue or question..." rows="5"></textarea>
+                            </div>
+
+                            <div id="support-validation-error" class="modal-validation-error" style="display:none;"></div>
+
+                            <button class="modal-submit-btn" id="support-submit" disabled>Send Message</button>
+                        </div>
+                    </div>
+
+                    <div id="support-success-view" class="support-success" style="display:none;">
+                        <div class="support-success-icon">&#10003;</div>
+                        <div class="support-success-title">Message sent!</div>
+                        <div class="support-success-subtitle">Thanks for reaching out. We'll review your message soon.</div>
+                        <button class="support-send-another" id="support-send-another">Send another message</button>
+                    </div>
+
+                    <div class="support-fallback">
+                        <p>You can also reach us directly at <a href="mailto:support@sanity-app.com">support@sanity-app.com</a></p>
+                    </div>
                 </div>
             </section>
 
@@ -1931,6 +2052,99 @@
                     formView.style.display = 'none';
                     successView.style.display = '';
                     setTimeout(closeModal, 2000);
+                })
+                .catch(function () {
+                    submitBtn.textContent = 'Error — try again';
+                    submitBtn.disabled = false;
+                });
+            });
+        })();
+
+        // =============================================
+        // Support Form — inline on /contact page
+        // =============================================
+        (function () {
+            var SUBMIT_URL = 'https://emaduuhawqbcdvtimnjo.supabase.co/functions/v1/submit-support-request';
+
+            var formView = document.getElementById('support-form-view');
+            var successView = document.getElementById('support-success-view');
+            var categorySelect = document.getElementById('support-category');
+            var emailInput = document.getElementById('support-email');
+            var messageInput = document.getElementById('support-message');
+            var submitBtn = document.getElementById('support-submit');
+            var errorEl = document.getElementById('support-validation-error');
+            var sendAnotherBtn = document.getElementById('support-send-another');
+
+            function updateSubmitState() {
+                var hasEmail = emailInput.value.trim().length > 0;
+                var hasMessage = messageInput.value.trim().length > 0;
+                submitBtn.disabled = !(hasEmail && hasMessage);
+                errorEl.style.display = 'none';
+            }
+
+            emailInput.addEventListener('input', updateSubmitState);
+            messageInput.addEventListener('input', updateSubmitState);
+
+            function validate() {
+                var email = emailInput.value.trim();
+                if (!email) {
+                    errorEl.textContent = 'Email is required.';
+                    errorEl.style.display = 'block';
+                    return false;
+                }
+                if (!email.includes('@') || !email.includes('.')) {
+                    errorEl.textContent = 'Please enter a valid email address.';
+                    errorEl.style.display = 'block';
+                    return false;
+                }
+                var message = messageInput.value.trim();
+                if (!message) {
+                    errorEl.textContent = 'Please enter a message.';
+                    errorEl.style.display = 'block';
+                    return false;
+                }
+                errorEl.style.display = 'none';
+                return true;
+            }
+
+            function resetForm() {
+                categorySelect.selectedIndex = 0;
+                emailInput.value = '';
+                messageInput.value = '';
+                submitBtn.disabled = true;
+                submitBtn.textContent = 'Send Message';
+                errorEl.style.display = 'none';
+            }
+
+            sendAnotherBtn.addEventListener('click', function () {
+                successView.style.display = 'none';
+                formView.style.display = '';
+                resetForm();
+            });
+
+            submitBtn.addEventListener('click', function () {
+                if (!validate()) return;
+
+                submitBtn.disabled = true;
+                submitBtn.textContent = 'Sending...';
+
+                var category = categorySelect.value || 'general_question';
+                var email = emailInput.value.trim();
+                var message = messageInput.value.trim();
+
+                fetch(SUBMIT_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        category: category,
+                        email: email,
+                        message: message
+                    })
+                })
+                .then(function (res) {
+                    if (!res.ok) throw new Error('Request failed');
+                    formView.style.display = 'none';
+                    successView.style.display = '';
                 })
                 .catch(function () {
                     submitBtn.textContent = 'Error — try again';
