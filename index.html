@@ -511,6 +511,38 @@
             color: #808080;
         }
 
+        /* --- Mobile blocker --- */
+        .mobile-blocker {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #f5f5f5;
+            z-index: 9999;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 2rem;
+        }
+        .mobile-blocker p {
+            font-size: 1.1rem;
+            color: #666;
+            line-height: 1.6;
+        }
+        .mobile-blocker .blocker-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #1a1a1a;
+            margin-bottom: 0.5rem;
+        }
+        @media (max-width: 768px) {
+            .mobile-blocker {
+                display: flex;
+            }
+        }
+
         .dashboard-loading {
             color: #808080;
             font-size: 0.9rem;
@@ -543,6 +575,14 @@
     </style>
 </head>
 <body>
+    <!-- Mobile blocker -->
+    <div class="mobile-blocker">
+        <div>
+            <p class="blocker-title">Sanity is best on desktop</p>
+            <p>Please visit this site on a computer for the full experience.</p>
+        </div>
+    </div>
+
     <!-- Layer 0: Persistent mesh gradient -->
     <canvas id="mesh-bg"></canvas>
 
