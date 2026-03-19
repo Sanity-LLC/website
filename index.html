@@ -712,7 +712,7 @@
             color: #888;
             margin-bottom: 0.25rem;
         }
-        .legal-content .legal-summary {
+        .legal-summary {
             background: rgba(255,255,255,0.65);
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
@@ -721,14 +721,14 @@
             border: 1px solid rgba(0,0,0,0.04);
             margin: 1rem 0 1.5rem;
         }
-        .legal-content .legal-summary p {
+        .legal-summary p {
             font-size: 0.85rem;
             margin-bottom: 0.4rem;
         }
-        .legal-content .legal-summary ul {
+        .legal-summary ul {
             margin-bottom: 0.4rem;
         }
-        .legal-content .legal-summary li {
+        .legal-summary li {
             font-size: 0.85rem;
         }
         .legal-content .legal-footer {
@@ -825,16 +825,19 @@
                     <h2>Which cities are supported?</h2>
                     <p>We currently cover New York City, Boston, Seattle, Chicago, San Francisco, Austin, and Cambridge. More cities are on the way — you can request one <a href="#" onclick="event.preventDefault(); openRequestModal();" style="color:inherit; text-decoration:none; font-weight:600;">here</a>.</p>
                     <h2>Is my data private?</h2>
-                    <p>Sanity is a health inspection app, not an ad platform. Here's the gist:</p>
-                    <ul>
-                        <li>We collect the minimum data needed to make the app work for you.</li>
-                        <li><strong>We do not sell your data. Period.</strong></li>
-                        <li>We do not serve ads or share your data with advertisers.</li>
-                        <li>We do not track you across other apps or websites.</li>
-                        <li>We use your location only to show you nearby restaurants — and it's optional.</li>
-                        <li>You can delete your account and data by contacting us.</li>
-                    </ul>
-                    <p>For full details, see our <a href="#privacy" data-nav="privacy" style="color:inherit; font-weight:600;">Privacy Policy</a>.</p>
+                    <div class="legal-content legal-summary">
+                        <p><strong>The Short Version</strong></p>
+                        <p>Sanity is a health inspection app, not an ad platform. Here's the gist:</p>
+                        <ul>
+                            <li>We collect the minimum data needed to make the app work for you.</li>
+                            <li><strong>We do not sell your data. Period.</strong></li>
+                            <li>We do not serve ads or share your data with advertisers.</li>
+                            <li>We do not track you across other apps or websites.</li>
+                            <li>We use your location only to show you nearby restaurants — and it's optional.</li>
+                            <li>You can delete your account and data by contacting us.</li>
+                        </ul>
+                        <p>The rest of this document explains the details. If you have questions, reach out to <a href="mailto:support@sanity-app.com">support@sanity-app.com</a>.</p>
+                    </div>
                     <h2>How much does it cost?</h2>
                     <p>Pricing details will be announced closer to launch. We also offer a student discount for verified .edu email holders.</p>
                 </div>
