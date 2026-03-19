@@ -764,7 +764,7 @@
                             <li>We use your location only to show you nearby restaurants — and it's optional.</li>
                             <li>You can delete your account and data by contacting us.</li>
                         </ul>
-                        <p>The rest of this document explains the details. If you have questions, reach out (see Section 12).</p>
+                        <p>The rest of this document explains the details. If you have questions, reach out to <a href="mailto:support@sanity-app.com">support@sanity-app.com</a>.</p>
                     </div>
 
                     <hr>
@@ -779,7 +779,7 @@
 
                     <h3>2.1 Account Information</h3>
                     <p><strong>What:</strong> Email address<br>
-                    <strong>When:</strong> When you create an account (via email/password, Apple Sign In, or Google Sign In)<br>
+                    <strong>When:</strong> When you create an account (via email/password, Apple Sign In, Google Sign In, or Facebook Login)<br>
                     <strong>Why:</strong> To authenticate you and associate your preferences with your account<br>
                     <strong>Notes:</strong> If you use Apple Sign In with email hiding, we only receive your relay address — we never see your real email.</p>
 
@@ -793,16 +793,15 @@
                         <li>Your location is used for real-time queries and is not stored in a location history or profile.</li>
                     </ul>
 
-                    <h3>2.3 Your Preferences and Saved Data</h3>
+                    <h3>2.3 Your Saved Data</h3>
                     <p><strong>What:</strong></p>
                     <ul>
                         <li><strong>Pinned establishments</strong> — restaurants you save, including optional custom nicknames you assign</li>
-                        <li><strong>Sensitivity settings</strong> — your personal violation-type severity preferences (e.g., if you care more about rodents than documentation violations)</li>
                         <li><strong>Notification preferences</strong> — whether you want alerts when pinned establishments receive new inspections</li>
                     </ul>
-                    <p><strong>When:</strong> When you pin a restaurant, adjust sensitivity settings, or toggle notification preferences<br>
+                    <p><strong>When:</strong> When you pin a restaurant or toggle notification preferences<br>
                     <strong>Why:</strong> To personalize the App to your priorities and restore your settings across sessions<br>
-                    <strong>Notes:</strong> Your sensitivity settings and pins are private to your account. They are never shared with other users, establishments, or third parties.</p>
+                    <strong>Notes:</strong> Your pins and preferences are private to your account. They are never shared with other users, establishments, or third parties.</p>
 
                     <h3>2.4 Usage Data</h3>
                     <p><strong>What:</strong> We track three types of in-app events:</p>
@@ -894,8 +893,10 @@
                         <tbody>
                             <tr><td><strong>Supabase</strong></td><td>All app data (account, preferences, events)</td><td>Database hosting, authentication, serverless functions</td></tr>
                             <tr><td><strong>RevenueCat</strong></td><td>Subscription status, purchase receipts</td><td>Subscription management</td></tr>
+                            <tr><td><strong>Stripe</strong></td><td>Payment info (website purchases)</td><td>Payment processing</td></tr>
                             <tr><td><strong>Apple</strong></td><td>Account info (Sign In with Apple), payment info (App Store purchases), map tiles</td><td>Authentication, payments, maps</td></tr>
                             <tr><td><strong>Google</strong></td><td>Account info (Google Sign-In)</td><td>Authentication</td></tr>
+                            <tr><td><strong>Facebook</strong></td><td>Account info (Facebook Login)</td><td>Authentication</td></tr>
                         </tbody>
                     </table>
 
@@ -999,7 +1000,7 @@
                         <li>Identifiers (email address, user ID)</li>
                         <li>Geolocation data (approximate, when permitted)</li>
                         <li>Internet or electronic network activity (in-app usage events)</li>
-                        <li>Inferences (sensitivity preferences you explicitly set — not inferences we draw)</li>
+                        <li>Inferences (preferences you explicitly set — not inferences we draw)</li>
                     </ul>
                     <p><strong>Categories of personal information sold:</strong> None. Never.</p>
                     <p>To exercise your CCPA rights, contact us at <a href="mailto:support@sanity-app.com">support@sanity-app.com</a>.</p>
@@ -1051,7 +1052,6 @@
                     <p>For privacy questions, data requests, or concerns:</p>
                     <ul>
                         <li><strong>Email:</strong> <a href="mailto:support@sanity-app.com">support@sanity-app.com</a></li>
-                        <li><strong>In-App:</strong> Settings &gt; Feedback</li>
                         <li><strong>Response Time:</strong> Within 30 days for formal requests</li>
                     </ul>
 
@@ -1098,7 +1098,7 @@
                     <h2>4. Your Account</h2>
 
                     <h3>4.1 Creating an Account</h3>
-                    <p>You can create an account using your email address, Apple Sign In, or Google Sign In. You are responsible for maintaining the security of your account credentials and for all activity under your account.</p>
+                    <p>You can create an account using your email address, Apple Sign In, Google Sign In, or Facebook Login. You are responsible for maintaining the security of your account credentials and for all activity under your account.</p>
 
                     <h3>4.2 Account Accuracy</h3>
                     <p>You agree to provide accurate information when creating your account. Don't impersonate others or use false information.</p>
@@ -1110,17 +1110,29 @@
 
                     <h2>5. Subscriptions and Payments</h2>
 
-                    <h3>5.1 Free and Paid Features</h3>
-                    <p>Sanity may offer both free and paid subscription tiers. Specific features available under each tier are described within the App.</p>
+                    <h3>5.1 Paid Subscription</h3>
+                    <p>Sanity is a paid subscription service. A subscription is required to access the App. Pricing and plan details are described within the App and on our website.</p>
 
                     <h3>5.2 Billing</h3>
-                    <p>Paid subscriptions are billed through the Apple App Store. By subscribing, you agree to the pricing and payment terms presented at the time of purchase. Prices may change, but we will notify you before any price increase takes effect on your subscription.</p>
+                    <p>Paid subscriptions can be purchased through:</p>
+                    <ul>
+                        <li><strong>Apple App Store</strong> — billed through your Apple ID account.</li>
+                        <li><strong>Our website (via Stripe)</strong> — billed directly to your payment method. Student discount pricing is available exclusively through our website via Stripe.</li>
+                    </ul>
+                    <p>By subscribing, you agree to the pricing and payment terms presented at the time of purchase. Prices may change, but we will notify you before any price increase takes effect on your subscription.</p>
 
                     <h3>5.3 Auto-Renewal</h3>
-                    <p>Subscriptions automatically renew at the end of each billing period unless you cancel before the renewal date. You can manage or cancel your subscription through your Apple App Store account settings.</p>
+                    <p>Subscriptions automatically renew at the end of each billing period unless you cancel before the renewal date.</p>
+                    <ul>
+                        <li><strong>App Store subscriptions:</strong> Manage or cancel through your Apple App Store account settings.</li>
+                        <li><strong>Stripe subscriptions:</strong> Manage or cancel through our website or by contacting us at <a href="mailto:support@sanity-app.com">support@sanity-app.com</a>.</li>
+                    </ul>
 
                     <h3>5.4 Refunds</h3>
-                    <p>Refund requests are handled by Apple in accordance with their App Store policies. We do not process refunds directly.</p>
+                    <ul>
+                        <li><strong>App Store purchases:</strong> Refund requests are handled by Apple in accordance with their App Store policies.</li>
+                        <li><strong>Stripe purchases:</strong> Contact us at <a href="mailto:support@sanity-app.com">support@sanity-app.com</a> to request a refund. Refunds are handled on a case-by-case basis.</li>
+                    </ul>
 
                     <h3>5.5 Free Trials</h3>
                     <p>We may offer free trial periods. If you don't cancel before the trial ends, your subscription will automatically convert to a paid subscription at the stated price.</p>
@@ -1176,7 +1188,56 @@
                     <hr>
 
                     <h2>9. Privacy and Data</h2>
-                    <p>Your use of the Service is also governed by our <a href="#" data-nav="privacy">Privacy Policy</a>, which describes in detail what data we collect, how we use it, and your rights regarding your personal information.</p>
+
+                    <h3>9.1 What We Collect</h3>
+                    <p>We collect and process the following data:</p>
+                    <ul>
+                        <li><strong>Account information:</strong> Email address (from registration or social sign-in)</li>
+                        <li><strong>Location data:</strong> Your approximate location (when you grant permission) to show nearby establishments. Location permission is optional — you can browse by selecting a metro area instead.</li>
+                        <li><strong>Usage data:</strong> Which establishments and inspections you view, search queries, and general app interactions — used to improve the Service.</li>
+                        <li><strong>Preferences:</strong> Your pinned establishments and notification preferences.</li>
+                        <li><strong>Form submissions:</strong> Feedback, feature requests, and city requests you voluntarily submit, including any optional contact information you provide.</li>
+                        <li><strong>Device information:</strong> Basic device metadata submitted with forms and for troubleshooting.</li>
+                    </ul>
+
+                    <h3>9.2 How We Use Your Data</h3>
+                    <p>We use your data to:</p>
+                    <ul>
+                        <li>Provide and personalize the Service</li>
+                        <li>Show you nearby establishments and relevant inspection data</li>
+                        <li>Save your preferences and pinned establishments across sessions</li>
+                        <li>Improve the App based on usage patterns and feedback</li>
+                        <li>Communicate with you about your account or submissions (if you provide contact info)</li>
+                    </ul>
+
+                    <h3>9.3 What We Don't Do</h3>
+                    <ul>
+                        <li>We do <strong>not</strong> sell your personal data to third parties.</li>
+                        <li>We do <strong>not</strong> use your data for third-party advertising.</li>
+                        <li>We do <strong>not</strong> share individual user data with restaurants or establishments.</li>
+                    </ul>
+
+                    <h3>9.4 Third-Party Services</h3>
+                    <p>The App uses the following third-party services that may process your data in accordance with their own privacy policies:</p>
+                    <ul>
+                        <li><strong>Supabase</strong> — Database and authentication infrastructure</li>
+                        <li><strong>RevenueCat</strong> — Subscription management</li>
+                        <li><strong>Stripe</strong> — Payment processing (website purchases)</li>
+                        <li><strong>Apple</strong> — Sign In with Apple, App Store payments, Maps</li>
+                        <li><strong>Google</strong> — Google Sign-In</li>
+                        <li><strong>Facebook</strong> — Facebook Login</li>
+                    </ul>
+
+                    <h3>9.5 Data Retention</h3>
+                    <p>We retain your data for as long as your account is active or as needed to provide the Service. If you delete your account, we will delete or anonymize your personal data within a reasonable timeframe, except where we are required by law to retain it.</p>
+
+                    <h3>9.6 Data Security</h3>
+                    <p>We use industry-standard security measures to protect your data, including encrypted connections (TLS), row-level security policies on our database, and secure authentication via JWT tokens. However, no system is 100% secure, and we cannot guarantee absolute security.</p>
+
+                    <h3>9.7 Your Rights</h3>
+                    <p>Depending on your jurisdiction, you may have rights regarding your personal data, including the right to access, correct, delete, or port your data. Contact us to exercise these rights.</p>
+
+                    <p>For full details on our data practices, see our <a href="#" data-nav="privacy">Privacy Policy</a>.</p>
 
                     <hr>
 
@@ -1269,7 +1330,6 @@
                     <p>If you have questions about these Terms, want to exercise your data rights, or need to report an issue:</p>
                     <ul>
                         <li><strong>Email:</strong> <a href="mailto:support@sanity-app.com">support@sanity-app.com</a></li>
-                        <li><strong>In-App:</strong> Use the Feedback form in Settings</li>
                     </ul>
 
                     <p class="legal-footer">These Terms of Service were last updated on March 18, 2026.</p>
