@@ -23,14 +23,21 @@
             z-index: 0;
         }
 
-        /* --- Centered content column --- */
-        #content-column {
+        /* --- Page wrapper (full viewport flex column) --- */
+        #page-wrapper {
             position: relative;
             z-index: 1;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* --- Centered content column --- */
+        #content-column {
             max-width: 640px;
             width: 100%;
             margin: 0 auto;
-            min-height: 100vh;
+            flex: 1;
             display: flex;
             flex-direction: column;
             padding: 0 1.5rem;
@@ -550,8 +557,7 @@
 
         /* --- Site footer --- */
         .site-footer {
-            margin-top: 40px;
-            padding: 20px 0;
+            padding: 20px 1.5rem;
             opacity: 1;
             transition: opacity 0.4s ease-in-out;
             font-size: 0.75rem;
@@ -586,7 +592,10 @@
     <!-- Layer 0: Persistent mesh gradient -->
     <canvas id="mesh-bg"></canvas>
 
-    <!-- Centered content column: nav + pages + footer -->
+    <!-- Page wrapper: content + footer -->
+    <div id="page-wrapper">
+
+    <!-- Centered content column: nav + pages -->
     <div id="content-column">
         <nav>
             <a class="nav-brand" data-nav="home">
@@ -721,12 +730,15 @@
             </div>
         </div>
 
-        <div class="site-footer">
-            <a data-nav="privacy">Privacy Policy</a>
-            <a data-nav="terms">Terms of Service</a>
-            <span class="footer-spacer"></span>
-            <span>&copy; 2026 Sanity LLC</span>
-        </div>
+    </div>
+
+    <div class="site-footer">
+        <a data-nav="privacy">Privacy Policy</a>
+        <a data-nav="terms">Terms of Service</a>
+        <span class="footer-spacer"></span>
+        <span>&copy; 2026 Sanity LLC</span>
+    </div>
+
     </div>
 
     <script>
