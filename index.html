@@ -200,6 +200,7 @@
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 12px;
+            min-height: 500px;
         }
         .city-tile {
             background: rgba(255, 255, 255, 0.65);
@@ -685,6 +686,11 @@
         }
 
         .dashboard-loading {
+            grid-column: 1 / -1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 400px;
             color: #808080;
             font-size: 0.9rem;
         }
