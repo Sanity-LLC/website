@@ -239,6 +239,7 @@
             position: relative;
             transition: flex-grow 0.3s ease;
             border-radius: 0;
+            min-width: 3px;
         }
         .health-bar > span:first-child { border-radius: 3px 0 0 3px; }
         .health-bar > span:last-child { border-radius: 0 3px 3px 0; }
@@ -257,7 +258,7 @@
             pointer-events: none;
             z-index: 20;
         }
-        .health-bar span:hover .bar-tooltip {
+        .health-bar span.bar-active .bar-tooltip {
             display: block;
         }
         .hb-green { background: #219653; }
@@ -1825,24 +1826,106 @@
 
             function healthBarSegment(cls, count, pct) {
                 if (count === 0) return '';
+                var small = pct < 5 ? ' data-small="1"' : '';
                 return '<span class="' + cls + '" style="flex-grow:' + pct.toFixed(1) + '" ' +
-                    'data-base="' + pct.toFixed(1) + '" data-pct="' + pct.toFixed(1) + '">' +
+                    'data-base="' + pct.toFixed(1) + '" data-pct="' + pct.toFixed(1) + '"' +
+                    small + '>' +
                     '<span class="bar-tooltip">' + count.toLocaleString() + ' ' +
                     BAR_LABELS[cls.replace('hb-', '')] + '</span></span>';
             }
 
             function initHealthBarHovers() {
+                var PROXIMITY_PX = 10;
+
                 document.querySelectorAll('.health-bar').forEach(function (bar) {
-                    var segments = bar.querySelectorAll('span[data-base]');
-                    segments.forEach(function (seg) {
-                        seg.addEventListener('mouseenter', function () {
-                            var pct = parseFloat(seg.getAttribute('data-pct'));
-                            if (pct >= 50) return; // already dominant, no expand
-                            seg.style.flexGrow = (pct * 1.8).toFixed(1);
-                        });
-                        seg.addEventListener('mouseleave', function () {
-                            seg.style.flexGrow = seg.getAttribute('data-base');
-                        });
+                    var segments = Array.prototype.slice.call(
+                        bar.querySelectorAll('span[data-base]')
+                    );
+                    if (segments.length === 0) return;
+
+                    var activeSeg = null;
+                    var activeTime = 0;
+
+                    function deactivate() {
+                        if (activeSeg) {
+                            if (activeSeg.hasAttribute('data-small')) {
+                                activeSeg._deactivatedAt = Date.now();
+                            }
+                            activeSeg.style.flexGrow = activeSeg.getAttribute('data-base');
+                            activeSeg.classList.remove('bar-active');
+                            activeSeg = null;
+                        }
+                    }
+
+                    function activate(seg) {
+                        if (seg === activeSeg) return;
+                        deactivate();
+                        activeSeg = seg;
+                        activeTime = Date.now();
+                        seg.classList.add('bar-active');
+                        var pct = parseFloat(seg.getAttribute('data-pct'));
+                        if (pct < 50) {
+                            var grow = pct * 1.8;
+                            if (seg.hasAttribute('data-small')) grow = Math.max(grow, 8);
+                            seg.style.flexGrow = grow.toFixed(1);
+                        }
+                    }
+
+                    function findSegment(clientX) {
+                        var barRect = bar.getBoundingClientRect();
+                        var x = clientX - barRect.left;
+
+                        var boundaries = [];
+                        for (var i = 0; i < segments.length; i++) {
+                            var rect = segments[i].getBoundingClientRect();
+                            boundaries.push({
+                                seg: segments[i],
+                                left: rect.left - barRect.left,
+                                right: rect.right - barRect.left,
+                                isSmall: segments[i].hasAttribute('data-small')
+                            });
+                        }
+
+                        // Check expanded hit zones for small segments first
+                        var proximityHit = null;
+                        var proximityDist = Infinity;
+                        for (var i = 0; i < boundaries.length; i++) {
+                            if (!boundaries[i].isSmall) continue;
+                            if (boundaries[i].seg === activeSeg && Date.now() - activeTime > 300) continue;
+                            if (boundaries[i].seg._deactivatedAt && Date.now() - boundaries[i].seg._deactivatedAt < 350) continue;
+                            var expandedLeft = boundaries[i].left - PROXIMITY_PX;
+                            var expandedRight = boundaries[i].right + PROXIMITY_PX;
+                            if (x >= expandedLeft && x <= expandedRight) {
+                                var center = (boundaries[i].left + boundaries[i].right) / 2;
+                                var dist = Math.abs(x - center);
+                                if (dist < proximityDist) {
+                                    proximityDist = dist;
+                                    proximityHit = boundaries[i];
+                                }
+                            }
+                        }
+                        if (proximityHit) return proximityHit.seg;
+
+                        // Fall back to direct hit on any segment
+                        for (var i = 0; i < boundaries.length; i++) {
+                            if (x >= boundaries[i].left && x <= boundaries[i].right) {
+                                return boundaries[i].seg;
+                            }
+                        }
+                        return null;
+                    }
+
+                    bar.addEventListener('mousemove', function (e) {
+                        var seg = findSegment(e.clientX);
+                        if (seg) {
+                            activate(seg);
+                        } else {
+                            deactivate();
+                        }
+                    });
+
+                    bar.addEventListener('mouseleave', function () {
+                        deactivate();
                     });
                 });
             }
