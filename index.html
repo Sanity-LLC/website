@@ -832,7 +832,6 @@
                 <li><a data-nav="about">About</a></li>
                 <li><a data-nav="faq">FAQ</a></li>
                 <li><a data-nav="contact">Support</a></li>
-                <li><a data-nav="student">Student Discount</a></li>
                 <li class="nav-download-wrap">
                     <a href="#" class="nav-download">Download</a>
                     <span class="nav-download-reveal" aria-hidden="true">Download</span>
@@ -891,7 +890,7 @@
                     </ul>
                     <p>Details about our privacy policy can be found <a data-nav="privacy" style="color:inherit; text-decoration:none; font-weight:600; cursor:pointer;">here</a>. If you have questions, reach out to <a href="mailto:support@sanity-app.com">support@sanity-app.com</a>.</p>
                     <h2>How much does it cost?</h2>
-                    <p>Pricing details will be announced closer to launch. We also offer a student discount for verified .edu email holders.</p>
+                    <p>Pricing details will be announced closer to launch.</p>
                 </div>
             </section>
 
@@ -1311,7 +1310,7 @@
                     <p>Paid subscriptions can be purchased through:</p>
                     <ul>
                         <li><strong>Apple App Store</strong> — billed through your Apple ID account.</li>
-                        <li><strong>Our website (via Stripe)</strong> — billed directly to your payment method. Student discount pricing is available exclusively through our website via Stripe.</li>
+                        <li><strong>Our website (via Stripe)</strong> — billed directly to your payment method.</li>
                     </ul>
                     <p>By subscribing, you agree to the pricing and payment terms presented at the time of purchase. Prices may change, but we will notify you before any price increase takes effect on your subscription.</p>
 
@@ -1530,13 +1529,6 @@
                 </div>
             </section>
 
-            <section data-page="student" class="page">
-                <div class="page-inner centered">
-                    <h1>Student Discount</h1>
-                    <p>Verify your student status with a .edu email to get a discounted subscription.</p>
-                    <p>Student verification flow coming soon.</p>
-                </div>
-            </section>
         </div>
 
         <!-- Coming soon modal -->
@@ -1637,7 +1629,7 @@
                 });
 
                 // Update page title
-                var titles = { home: 'Sanity', about: 'About — Sanity', faq: 'FAQ — Sanity', contact: 'Support — Sanity', privacy: 'Privacy Policy — Sanity', terms: 'Terms of Service — Sanity', student: 'Student Discount — Sanity' };
+                var titles = { home: 'Sanity', about: 'About — Sanity', faq: 'FAQ — Sanity', contact: 'Support — Sanity', privacy: 'Privacy Policy — Sanity', terms: 'Terms of Service — Sanity' };
                 document.title = titles[pageName] || 'Sanity';
 
                 // Fade out current + footer
