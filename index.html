@@ -371,6 +371,19 @@
         .ghost-tile .ghost-cta a:hover {
             color: rgba(128, 128, 128, 0.7);
         }
+        .city-tile.coming-soon {
+            opacity: 0.45;
+            border: 2px dashed rgba(128, 128, 128, 0.78);
+            box-shadow: none;
+        }
+        .city-tile.coming-soon .health-bar > span {
+            background: #aaa;
+        }
+        .city-tile.coming-soon .coming-soon-label {
+            font-size: 0.75rem;
+            color: #808080;
+            margin-top: 2px;
+        }
         .ghost-fade-wrap {
             grid-column: 1 / -1;
             display: grid;
@@ -1774,7 +1787,8 @@
                 'chicago': 'Chicago & Evanston',
                 'seattle': 'Seattle, Bellevue & King County',
                 'sf': 'San Francisco, Oakland, San Jose',
-                'boston': 'Boston & Cambridge'
+                'boston': 'Boston & Cambridge',
+                'vancouver': 'Vancouver, Richmond & Greater Vancouver'
             };
             // Override display names for the website (DB has full jurisdiction names)
             var DISPLAY_NAMES = {
@@ -2053,7 +2067,17 @@
                     container.appendChild(tile);
                 });
 
-                // Ghost "Coming Soon" tile
+                // Austin "Coming Soon" tile (styled like a real city tile, greyed out)
+                var austinGhost = document.createElement('div');
+                austinGhost.className = 'city-tile coming-soon';
+                austinGhost.innerHTML =
+                    '<div class="city-header"><h2>Austin</h2></div>' +
+                    '<div class="city-total">5,945 establishments</div>' +
+                    '<div class="health-bar"><span style="flex-grow:1;border-radius:3px"></span></div>' +
+                    '<div class="violations-header">Coming Soon...</div>';
+                container.appendChild(austinGhost);
+
+                // Ghost "Coming Soon" tile with form CTA
                 var ghost = document.createElement('div');
                 ghost.className = 'ghost-tile';
                 ghost.innerHTML = '<span class="ghost-label">Coming Soon</span>' +
