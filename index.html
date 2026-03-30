@@ -1792,8 +1792,11 @@
             };
             // Override display names for the website (DB has full jurisdiction names)
             var DISPLAY_NAMES = {
-                'seattle': 'Seattle'
+                'seattle': 'Seattle',
+                'vancouver': 'Vancouver, BC'
             };
+            // Custom tile order (left→right, top→bottom)
+            var TILE_ORDER = ['sf', 'nyc', 'seattle', 'boston', 'vancouver', 'chicago'];
 
             // Merge Boston + Cambridge into one entry
             function mergeBostonCambridge(data) {
@@ -1818,8 +1821,14 @@
                     boston.violation_counts = vc;
                 }
                 if (boston) rest.push(boston);
-                // Re-sort by total descending
-                rest.sort(function (a, b) { return b.total_establishments - a.total_establishments; });
+                // Sort by custom tile order
+                rest.sort(function (a, b) {
+                    var ai = TILE_ORDER.indexOf(a.jurisdiction_code);
+                    var bi = TILE_ORDER.indexOf(b.jurisdiction_code);
+                    if (ai === -1) ai = 999;
+                    if (bi === -1) bi = 999;
+                    return ai - bi;
+                });
                 return rest;
             }
 
