@@ -3,6 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; connect-src 'self' https://emaduuhawqbcdvtimnjo.supabase.co; img-src 'self' data:; frame-ancestors 'none'; base-uri 'self'; form-action 'self'">
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <meta name="referrer" content="strict-origin-when-cross-origin">
     <title>Sanity</title>
     <link rel="icon" type="image/png" href="logo.png">
     <link rel="apple-touch-icon" href="logo.png">
@@ -1127,7 +1130,7 @@
                         <li><strong>Encryption at rest:</strong> Database storage is encrypted at rest via Supabase/AWS infrastructure.</li>
                         <li><strong>Row-Level Security (RLS):</strong> Database policies ensure users can only access their own data. Your pins, preferences, events, and account information are isolated from other users at the database level.</li>
                         <li><strong>Authentication:</strong> Secure JWT-based authentication with token expiration and refresh.</li>
-                        <li><strong>Access control:</strong> Service-level keys are never exposed to client applications. Administrative access is restricted.</li>
+                        <li><strong>Access control:</strong> The website uses Supabase anonymous keys for public form submissions. Service-level keys with elevated privileges are never exposed to client applications. Administrative access is restricted.</li>
                         <li><strong>Rate limiting:</strong> Form submissions are rate-limited to prevent abuse (5 per 5-minute window).</li>
                     </ul>
 
@@ -1622,14 +1625,28 @@
 
     <script>
         // =============================================
+        // Shared utilities
+        // =============================================
+        function escapeHtml(str) {
+            var div = document.createElement('div');
+            div.textContent = str;
+            return div.innerHTML;
+        }
+        function escapeAttr(str) {
+            return str.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/'/g, '&#39;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+        }
+
+        // =============================================
         // SPA Navigation — fade transitions over mesh
         // =============================================
         (function () {
             var isNavigating = false;
             var FADE_DURATION = 400; // ms, matches CSS transition
+            var VALID_PAGES = ['home', 'about', 'faq', 'contact', 'privacy', 'terms'];
 
             function navigateTo(pageName, pushState) {
                 if (isNavigating) return;
+                if (VALID_PAGES.indexOf(pageName) === -1) pageName = 'home';
                 var current = document.querySelector('.page.active');
                 var target = document.querySelector('[data-page="' + pageName + '"]');
                 if (!target || target === current) return;
@@ -2027,6 +2044,7 @@
                 cities.forEach(function (city) {
                     var code = city.jurisdiction_code;
                     var name = DISPLAY_NAMES[code] || city.display_name;
+                    var safeName = escapeHtml(name);
                     var total = city.total_establishments;
                     var g = city.green_count, y = city.yellow_count;
                     var o = city.orange_count, r = city.red_count;
@@ -2040,10 +2058,11 @@
                     var vc = city.violation_counts || {};
                     var sorted = Object.keys(vc).sort(function (a, b) { return vc[b] - vc[a]; });
                     var tags = sorted.map(function (key) {
-                        var label = VIOLATION_LABELS[key] || key;
+                        var safeKey = escapeAttr(key);
+                        var label = VIOLATION_LABELS[key] || escapeHtml(key);
                         var countStr = vc[key].toLocaleString();
                         var innerHtml = '<span class="vcount">' + countStr + '</span> ' + label;
-                        return '<span class="violation-tag" data-vtype="' + key + '">' +
+                        return '<span class="violation-tag" data-vtype="' + safeKey + '">' +
                             innerHtml +
                             '<span class="vtag-color" aria-hidden="true">' + innerHtml + '</span>' +
                             '</span>';
@@ -2063,7 +2082,7 @@
                     var tile = document.createElement('div');
                     tile.className = 'city-tile';
                     tile.innerHTML =
-                        '<div class="city-header"><h2>' + name + '</h2>' + infoHtml + '</div>' +
+                        '<div class="city-header"><h2>' + safeName + '</h2>' + infoHtml + '</div>' +
                         '<div class="city-total">' + total.toLocaleString() + ' establishments</div>' +
                         '<div class="health-bar">' +
                             healthBarSegment('hb-green', g, gPct) +
@@ -2123,15 +2142,24 @@
                 initViolationTagHovers();
             }
 
-            fetch(API_URL)
-                .then(function (res) { return res.json(); })
+            var controller = new AbortController();
+            setTimeout(function () { controller.abort(); }, 15000);
+
+            fetch(API_URL, { signal: controller.signal })
+                .then(function (res) {
+                    if (!res.ok) throw new Error('Server error: ' + res.status);
+                    var ct = res.headers.get('content-type') || '';
+                    if (ct.indexOf('application/json') === -1) throw new Error('Unexpected response type');
+                    return res.json();
+                })
                 .then(function (data) {
                     if (Array.isArray(data)) renderDashboard(mergeBostonCambridge(data));
                     else throw new Error(data.error || 'Unknown error');
                 })
-                .catch(function () {
+                .catch(function (err) {
                     var container = document.getElementById('city-dashboard');
-                    container.innerHTML = '<p class="dashboard-loading">Unable to load city data.</p>';
+                    var msg = err && err.name === 'AbortError' ? 'Request timed out.' : 'Unable to load city data.';
+                    container.innerHTML = '<p class="dashboard-loading">' + msg + '</p>';
                 });
         })();
 
@@ -2142,6 +2170,9 @@
         (function () {
             var ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVtYWR1dWhhd3FiY2R2dGltbmpvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQ1MTAxMTAsImV4cCI6MjA3MDA4NjExMH0.4c5yRD8_gn9qbn483cbI7Pqukwhyei7e0evt8ELqWG0';
             var SUBMIT_URL = 'https://emaduuhawqbcdvtimnjo.supabase.co/functions/v1/submit-form';
+            var submitTimestamps = [];
+            var RATE_LIMIT = 5;
+            var RATE_WINDOW = 5 * 60 * 1000; // 5 minutes
 
             var modal = document.getElementById('request-modal');
             var formView = document.getElementById('modal-form-view');
@@ -2214,7 +2245,7 @@
 
             function validate() {
                 var email = emailInput.value.trim();
-                if (email && (!email.includes('@') || !email.includes('.'))) {
+                if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
                     errorEl.textContent = 'Please enter a valid email address.';
                     errorEl.style.display = 'block';
                     return false;
@@ -2233,6 +2264,16 @@
                 var cityRaw = cityInput.value.trim();
                 if (!cityRaw) return;
                 if (!validate()) return;
+
+                // Rate limiting
+                var now = Date.now();
+                submitTimestamps = submitTimestamps.filter(function (t) { return now - t < RATE_WINDOW; });
+                if (submitTimestamps.length >= RATE_LIMIT) {
+                    errorEl.textContent = 'Too many submissions. Please try again later.';
+                    errorEl.style.display = 'block';
+                    return;
+                }
+                submitTimestamps.push(now);
 
                 submitBtn.disabled = true;
                 submitBtn.textContent = 'Submitting...';
@@ -2255,7 +2296,7 @@
                     body: JSON.stringify({ type: 'city_request', content: content })
                 })
                 .then(function (res) {
-                    if (!res.ok) throw new Error('Request failed');
+                    if (!res.ok) throw new Error('Request failed: ' + res.status);
                     successCityText.textContent = "We'll consider adding " + cityRaw + " in a future update.";
                     formView.style.display = 'none';
                     successView.style.display = '';
@@ -2272,7 +2313,11 @@
         // Support Form — inline on /contact page
         // =============================================
         (function () {
+            var ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVtYWR1dWhhd3FiY2R2dGltbmpvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQ1MTAxMTAsImV4cCI6MjA3MDA4NjExMH0.4c5yRD8_gn9qbn483cbI7Pqukwhyei7e0evt8ELqWG0';
             var SUBMIT_URL = 'https://emaduuhawqbcdvtimnjo.supabase.co/functions/v1/submit-support-request';
+            var submitTimestamps = [];
+            var RATE_LIMIT = 5;
+            var RATE_WINDOW = 5 * 60 * 1000; // 5 minutes
 
             var formView = document.getElementById('support-form-view');
             var successView = document.getElementById('support-success-view');
@@ -2300,7 +2345,7 @@
                     errorEl.style.display = 'block';
                     return false;
                 }
-                if (!email.includes('@') || !email.includes('.')) {
+                if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
                     errorEl.textContent = 'Please enter a valid email address.';
                     errorEl.style.display = 'block';
                     return false;
@@ -2333,6 +2378,16 @@
             submitBtn.addEventListener('click', function () {
                 if (!validate()) return;
 
+                // Rate limiting
+                var now = Date.now();
+                submitTimestamps = submitTimestamps.filter(function (t) { return now - t < RATE_WINDOW; });
+                if (submitTimestamps.length >= RATE_LIMIT) {
+                    errorEl.textContent = 'Too many submissions. Please try again later.';
+                    errorEl.style.display = 'block';
+                    return;
+                }
+                submitTimestamps.push(now);
+
                 submitBtn.disabled = true;
                 submitBtn.textContent = 'Sending...';
 
@@ -2342,7 +2397,10 @@
 
                 fetch(SUBMIT_URL, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + ANON_KEY
+                    },
                     body: JSON.stringify({
                         category: category,
                         email: email,
@@ -2350,7 +2408,7 @@
                     })
                 })
                 .then(function (res) {
-                    if (!res.ok) throw new Error('Request failed');
+                    if (!res.ok) throw new Error('Request failed: ' + res.status);
                     formView.style.display = 'none';
                     successView.style.display = '';
                 })
