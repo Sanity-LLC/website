@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; connect-src 'self' https://emaduuhawqbcdvtimnjo.supabase.co; img-src 'self' data:; frame-ancestors 'none'; base-uri 'self'; form-action 'self'">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; connect-src 'self' https://emaduuhawqbcdvtimnjo.supabase.co; img-src 'self' data:; object-src 'none'; base-uri 'self'; form-action 'self'">
     <meta http-equiv="X-Content-Type-Options" content="nosniff">
     <meta name="referrer" content="strict-origin-when-cross-origin">
     <title>Sanity</title>
@@ -929,12 +929,12 @@
 
                             <div class="modal-field-group">
                                 <label class="modal-field-label" for="support-email">Email <span class="support-required">*</span></label>
-                                <input type="email" class="modal-input" id="support-email" placeholder="email@example.com" autocapitalize="off" autocorrect="off">
+                                <input type="email" class="modal-input" id="support-email" placeholder="email@example.com" autocapitalize="off" autocorrect="off" maxlength="254">
                             </div>
 
                             <div class="modal-field-group">
                                 <label class="modal-field-label" for="support-message">Message <span class="support-required">*</span></label>
-                                <textarea class="modal-input support-textarea" id="support-message" placeholder="Describe your issue or question..." rows="5"></textarea>
+                                <textarea class="modal-input support-textarea" id="support-message" placeholder="Describe your issue or question..." rows="5" maxlength="5000"></textarea>
                             </div>
 
                             <div id="support-validation-error" class="modal-validation-error" style="display:none;"></div>
@@ -1574,7 +1574,7 @@
                     <div class="modal-body">
                         <div class="modal-field-group">
                             <div class="modal-city-label">What city would you like us to add?</div>
-                            <input type="text" class="modal-input" id="request-city" placeholder="ie. Austin, TX" autocapitalize="words">
+                            <input type="text" class="modal-input" id="request-city" placeholder="ie. Austin, TX" autocapitalize="words" maxlength="100">
                         </div>
 
                         <div class="modal-contact-section">
@@ -1583,12 +1583,12 @@
 
                             <div class="modal-field-group">
                                 <label class="modal-field-label" for="request-email">Email</label>
-                                <input type="email" class="modal-input" id="request-email" placeholder="email@example.com" autocapitalize="off" autocorrect="off">
+                                <input type="email" class="modal-input" id="request-email" placeholder="email@example.com" autocapitalize="off" autocorrect="off" maxlength="254">
                             </div>
 
                             <div class="modal-field-group">
                                 <label class="modal-field-label" for="request-phone">Phone</label>
-                                <input type="tel" class="modal-input" id="request-phone" placeholder="(555) 123-4567">
+                                <input type="tel" class="modal-input" id="request-phone" placeholder="(555) 123-4567" maxlength="14">
                             </div>
 
                             <div class="modal-field-footer">Message and data rates may apply. Message frequency varies.</div>
@@ -1635,6 +1635,9 @@
         function escapeAttr(str) {
             return str.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/'/g, '&#39;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
         }
+
+        // Shared Supabase anonymous key (public, protected by RLS)
+        var ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVtYWR1dWhhd3FiY2R2dGltbmpvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQ1MTAxMTAsImV4cCI6MjA3MDA4NjExMH0.4c5yRD8_gn9qbn483cbI7Pqukwhyei7e0evt8ELqWG0';
 
         // =============================================
         // SPA Navigation — fade transitions over mesh
@@ -1708,6 +1711,7 @@
 
             // Set initial state
             var initialPage = getPageFromPath();
+            if (VALID_PAGES.indexOf(initialPage) === -1) initialPage = 'home';
             if (initialPage !== 'home') {
                 // Swap to correct page immediately (no animation) on direct URL visit
                 var home = document.querySelector('[data-page="home"]');
@@ -1862,7 +1866,7 @@
                 return '<span class="' + cls + '" style="flex-grow:' + pct.toFixed(1) + '" ' +
                     'data-base="' + pct.toFixed(1) + '" data-pct="' + pct.toFixed(1) + '"' +
                     small + '>' +
-                    '<span class="bar-tooltip">' + count.toLocaleString() + ' ' +
+                    '<span class="bar-tooltip">' + Number(count).toLocaleString() + ' ' +
                     BAR_LABELS[cls.replace('hb-', '')] + '</span></span>';
             }
 
@@ -2060,7 +2064,7 @@
                     var tags = sorted.map(function (key) {
                         var safeKey = escapeAttr(key);
                         var label = VIOLATION_LABELS[key] || escapeHtml(key);
-                        var countStr = vc[key].toLocaleString();
+                        var countStr = Number(vc[key]).toLocaleString();
                         var innerHtml = '<span class="vcount">' + countStr + '</span> ' + label;
                         return '<span class="violation-tag" data-vtype="' + safeKey + '">' +
                             innerHtml +
@@ -2076,14 +2080,14 @@
                             '<circle cx="12" cy="12" r="12"/>' +
                             '<text x="12" y="17" text-anchor="middle" font-size="14" font-weight="700" font-family="-apple-system,BlinkMacSystemFont,sans-serif" fill="#fff">i</text>' +
                             '</svg>' +
-                            '<span class="tooltip">' + AREA_INFO[code] + '</span></span>';
+                            '<span class="tooltip">' + escapeHtml(AREA_INFO[code]) + '</span></span>';
                     }
 
                     var tile = document.createElement('div');
                     tile.className = 'city-tile';
                     tile.innerHTML =
                         '<div class="city-header"><h2>' + safeName + '</h2>' + infoHtml + '</div>' +
-                        '<div class="city-total">' + total.toLocaleString() + ' establishments</div>' +
+                        '<div class="city-total">' + Number(total).toLocaleString() + ' establishments</div>' +
                         '<div class="health-bar">' +
                             healthBarSegment('hb-green', g, gPct) +
                             healthBarSegment('hb-yellow', y, yPct) +
@@ -2168,7 +2172,6 @@
         // =============================================
         var openRequestModal;
         (function () {
-            var ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVtYWR1dWhhd3FiY2R2dGltbmpvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQ1MTAxMTAsImV4cCI6MjA3MDA4NjExMH0.4c5yRD8_gn9qbn483cbI7Pqukwhyei7e0evt8ELqWG0';
             var SUBMIT_URL = 'https://emaduuhawqbcdvtimnjo.supabase.co/functions/v1/submit-form';
             var submitTimestamps = [];
             var RATE_LIMIT = 5;
@@ -2313,7 +2316,6 @@
         // Support Form — inline on /contact page
         // =============================================
         (function () {
-            var ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVtYWR1dWhhd3FiY2R2dGltbmpvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQ1MTAxMTAsImV4cCI6MjA3MDA4NjExMH0.4c5yRD8_gn9qbn483cbI7Pqukwhyei7e0evt8ELqWG0';
             var SUBMIT_URL = 'https://emaduuhawqbcdvtimnjo.supabase.co/functions/v1/submit-support-request';
             var submitTimestamps = [];
             var RATE_LIMIT = 5;
