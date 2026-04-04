@@ -93,7 +93,7 @@
                         <li>We do not serve ads or share your data with advertisers.</li>
                         <li>We do not track you across other apps or websites.</li>
                         <li>We use your location only to show you nearby restaurants — and it's&nbsp;optional.</li>
-                        <li>You can delete your account and data by contacting us.</li>
+                        <li>You can delete your account and data directly in the App, or by emailing us.</li>
                     </ul>
                     <p>Details about our privacy policy can be found <a data-nav="privacy" style="color:inherit; text-decoration:none; font-weight:600; cursor:pointer;">here</a>. If you have questions, reach out to <a href="mailto:support@sanity-app.com">support@sanity-app.com</a>.</p>
                     <h2>How much does it cost?</h2>
@@ -151,7 +151,7 @@
                 <div class="page-inner legal-content">
                     <h1>Privacy Policy</h1>
                     <p class="legal-meta"><strong>Effective Date:</strong> March 18, 2026</p>
-                    <p class="legal-meta"><strong>Last Updated:</strong> March 18, 2026</p>
+                    <p class="legal-meta"><strong>Last Updated:</strong> April 4, 2026</p>
 
                     <div class="legal-summary">
                         <p><strong>The Short Version</strong></p>
@@ -162,7 +162,7 @@
                             <li>We do not serve ads or share your data with advertisers.</li>
                             <li>We do not track you across other apps or websites.</li>
                             <li>We use your location only to show you nearby restaurants — and it's optional.</li>
-                            <li>You can delete your account and data by contacting us.</li>
+                            <li>You can delete your account and data directly in the App, or by emailing us.</li>
                         </ul>
                         <p>The rest of this document explains the details. If you have questions, reach out to <a href="mailto:support@sanity-app.com">support@sanity-app.com</a>.</p>
                     </div>
@@ -170,7 +170,7 @@
                     <hr>
 
                     <h2>1. Who We Are</h2>
-                    <p>Sanity ("we," "us," "our") operates the Sanity mobile application (the "App"). This Privacy Policy explains how we collect, use, store, and protect your personal information when you use the App.</p>
+                    <p>Sanity ("we," "us," "our") operates the Sanity mobile application (the "App") and the Sanity website at sanity-app.com (the "Website"). This Privacy Policy explains how we collect, use, store, and protect your personal information when you use the App or the Website (collectively, the "Service").</p>
 
                     <hr>
 
@@ -179,7 +179,7 @@
 
                     <h3>2.1 Account Information</h3>
                     <p><strong>What:</strong> Email address<br>
-                    <strong>When:</strong> When you create an account (via email/password, Apple Sign In, Google Sign In, or Facebook Login)<br>
+                    <strong>When:</strong> When you create an account (via email/password, Apple Sign In, or Google Sign In)<br>
                     <strong>Why:</strong> To authenticate you and associate your preferences with your account<br>
                     <strong>Notes:</strong> If you use Apple Sign In with email hiding, we only receive your relay address — we never see your real email.</p>
 
@@ -219,26 +219,46 @@
                     </ul>
 
                     <h3>2.5 Form Submissions</h3>
-                    <p><strong>What:</strong> Content you voluntarily submit through in-app forms:</p>
+                    <p><strong>What:</strong> Content you voluntarily submit through in-app forms and the Website:</p>
                     <ul>
                         <li><strong>Feedback</strong> — free-text message</li>
                         <li><strong>Feature requests</strong> — title and optional description</li>
                         <li><strong>City requests</strong> — city name, optional email address, optional phone number</li>
+                        <li><strong>Support requests</strong> — category (bug report, feature request, general question, or account issue), email address, and message (submitted via the App's Settings or the Website's support page)</li>
                     </ul>
                     <p><strong>When:</strong> When you choose to submit a form<br>
-                    <strong>Why:</strong> To hear from you and improve the App</p>
+                    <strong>Why:</strong> To hear from you, respond to issues, and improve the Service</p>
                     <ul>
                         <li>Email and phone on city request forms are <strong>optional</strong> and only used if we need to follow up with you about your request.</li>
+                        <li>Support requests require an email address so we can respond to you.</li>
                         <li>City request forms can be submitted during onboarding before you have an account — in that case, no user ID is attached.</li>
+                        <li>Support requests submitted via the Website are not linked to your app account.</li>
+                        <li>All form inputs are sanitized server-side to protect against malicious content.</li>
                     </ul>
 
                     <h3>2.6 Device Information</h3>
                     <p><strong>What:</strong> Basic device metadata (device model, OS version, app version)<br>
                     <strong>When:</strong> Submitted alongside form submissions only<br>
                     <strong>Why:</strong> To help us reproduce and debug issues reported via feedback forms<br>
-                    <strong>Notes:</strong> We do not collect device identifiers (IDFA, IDFV), hardware serial numbers, or carrier information.</p>
+                    <strong>Notes:</strong> We do not collect device identifiers (IDFA, IDFV), hardware serial numbers, or carrier information. For device integrity data (App Attest), see Section 2.7.</p>
 
-                    <h3>2.7 What We Do NOT Collect</h3>
+                    <h3>2.7 Device Integrity Verification</h3>
+                    <p><strong>What:</strong> We use Apple's App Attest service to verify that requests to our servers come from a genuine, unmodified copy of the Sanity app. When your device is attested, we store:</p>
+                    <ul>
+                        <li>A device-specific public key (generated by Apple's secure hardware)</li>
+                        <li>A sign count (a counter used to prevent replay attacks)</li>
+                        <li>An environment indicator (production or development)</li>
+                        <li>A timestamp of the last verification</li>
+                    </ul>
+                    <p><strong>When:</strong> When you first use the App and periodically during normal use<br>
+                    <strong>Why:</strong> To prevent unauthorized access to our servers and protect our proprietary data from scraping and abuse</p>
+                    <ul>
+                        <li>App Attest is a <strong>privacy-preserving</strong> technology designed by Apple. The stored key is unique to this app installation — it <strong>cannot</strong> be used to identify your device, track you across apps, or link to your hardware.</li>
+                        <li>We do <strong>not</strong> use App Attest data for analytics, advertising, or profiling.</li>
+                        <li>This data is not linked to your user account. It is associated with your app installation, not your identity.</li>
+                    </ul>
+
+                    <h3>2.8 What We Do NOT Collect</h3>
                     <p>To be explicit:</p>
                     <ul>
                         <li><strong>No contacts or address book</strong></li>
@@ -247,9 +267,19 @@
                         <li><strong>No browsing history or cross-app tracking</strong></li>
                         <li><strong>No advertising identifiers (IDFA)</strong></li>
                         <li><strong>No device fingerprinting</strong></li>
-                        <li><strong>No cookies</strong> (we're a native app, not a website)</li>
-                        <li><strong>No IP address logging</strong> for analytics purposes</li>
+                        <li><strong>No cookies</strong> (neither the App nor the Website uses cookies)</li>
+                        <li><strong>No IP address logging for analytics purposes</strong> — however, IP addresses are temporarily logged for rate limiting and abuse prevention on our Website and public API endpoints (see Section 2.9)</li>
                         <li><strong>No biometric data</strong></li>
+                    </ul>
+
+                    <h3>2.9 Rate Limiting Data</h3>
+                    <p><strong>What:</strong> IP addresses and the name of the endpoint accessed<br>
+                    <strong>When:</strong> When you submit forms on our Website or access public API endpoints<br>
+                    <strong>Why:</strong> To enforce rate limits and prevent abuse (e.g., spam submissions)</p>
+                    <ul>
+                        <li>Rate limit logs are <strong>automatically cleaned</strong> as part of each rate limit check. Entries older than the rate limit window (typically under 5 minutes) are deleted.</li>
+                        <li>We do <strong>not</strong> use IP addresses for analytics, tracking, identification, or any purpose other than rate limiting.</li>
+                        <li>IP addresses are <strong>not</strong> linked to your user account.</li>
                     </ul>
 
                     <hr>
@@ -266,6 +296,8 @@
                             <tr><td>Usage events</td><td>Improve search, identify data gaps, understand feature usage</td></tr>
                             <tr><td>Form submissions</td><td>Act on your feedback, respond to requests</td></tr>
                             <tr><td>Device info</td><td>Debug issues reported via feedback</td></tr>
+                            <tr><td>Device integrity data</td><td>Prevent unauthorized access, protect proprietary data</td></tr>
+                            <tr><td>IP addresses</td><td>Rate limiting and abuse prevention (automatically cleaned)</td></tr>
                         </tbody>
                     </table>
                     <p>We do <strong>not</strong> use your data for:</p>
@@ -294,9 +326,8 @@
                             <tr><td><strong>Supabase</strong></td><td>All app data (account, preferences, events)</td><td>Database hosting, authentication, serverless functions</td></tr>
                             <tr><td><strong>RevenueCat</strong></td><td>Subscription status, purchase receipts</td><td>Subscription management</td></tr>
                             <tr><td><strong>Stripe</strong></td><td>Payment info (website purchases)</td><td>Payment processing</td></tr>
-                            <tr><td><strong>Apple</strong></td><td>Account info (Sign In with Apple), payment info (App Store purchases), map tiles</td><td>Authentication, payments, maps</td></tr>
+                            <tr><td><strong>Apple</strong></td><td>Account info (Sign In with Apple), payment info (App Store purchases), map tiles, device attestation</td><td>Authentication, payments, maps, device integrity verification</td></tr>
                             <tr><td><strong>Google</strong></td><td>Account info (Google Sign-In)</td><td>Authentication</td></tr>
-                            <tr><td><strong>Facebook</strong></td><td>Account info (Facebook Login)</td><td>Authentication</td></tr>
                         </tbody>
                     </table>
 
@@ -341,11 +372,15 @@
                             <tr><td>Usage events</td><td>Until you delete your account</td></tr>
                             <tr><td>Form submissions</td><td>Until you delete your account</td></tr>
                             <tr><td>Authentication tokens</td><td>Expire automatically; refreshed on active use</td></tr>
+                            <tr><td>Device integrity data</td><td>Until the app installation is no longer active or the key is revoked</td></tr>
+                            <tr><td>Rate limit logs (IP addresses)</td><td>Automatically deleted after the rate limit window expires (typically under 5 minutes)</td></tr>
                         </tbody>
                     </table>
                     <p>When you delete your account:</p>
                     <ul>
-                        <li>Your personal data is deleted or anonymized within <strong>30 days</strong>.</li>
+                        <li><strong>In-app deletion is immediate:</strong> your account, pins, preferences, usage events, and notification queue entries are deleted right away.</li>
+                        <li><strong>Email-initiated requests</strong> will be processed within <strong>30 days</strong>.</li>
+                        <li>Form submissions and support requests associated with your account are <strong>disassociated</strong> (your user ID is removed) but the content may be retained for product improvement purposes.</li>
                         <li>Aggregated, non-identifiable statistics (e.g., "X users searched in Boston this month") may be retained indefinitely.</li>
                         <li>Data we are legally required to retain (e.g., for tax/financial records related to subscriptions) will be kept for the minimum required period, then deleted.</li>
                     </ul>
@@ -362,7 +397,7 @@
                     <p>You can ask us to correct inaccurate personal data.</p>
 
                     <h3>7.3 Deletion</h3>
-                    <p>You can request that we delete your account and associated personal data. We will comply within 30 days, subject to any legal retention requirements.</p>
+                    <p>You can delete your account directly in the App (Settings &gt; Account &gt; Delete Account) or by emailing us at <a href="mailto:support@sanity-app.com">support@sanity-app.com</a>. In-app deletion is immediate and requires a two-step confirmation. Email requests will be processed within 30 days. Deletion is subject to any legal retention requirements.</p>
 
                     <h3>7.4 Data Portability</h3>
                     <p>You can request your data in a structured, machine-readable format.</p>
@@ -382,7 +417,7 @@
                     <hr>
 
                     <h2>8. Children's Privacy</h2>
-                    <p>Sanity is not directed at children under 13. We do not knowingly collect personal information from children under 13. If we learn that we have collected data from a child under 13, we will delete it promptly. If you believe a child under 13 has provided us with personal data, please contact us.</p>
+                    <p>Sanity is not directed at children under 13. We do not knowingly collect personal information from children under 13, in compliance with the Children's Online Privacy Protection Act (COPPA) and its updated rules. If we learn that we have collected data from a child under 13, we will delete it promptly and securely. If you believe a child under 13 has provided us with personal data, please contact us immediately at <a href="mailto:support@sanity-app.com">support@sanity-app.com</a>.</p>
 
                     <hr>
 
@@ -391,8 +426,10 @@
                     <ul>
                         <li><strong>Right to Know:</strong> You can request details about what personal information we collect, use, and disclose (see Section 2).</li>
                         <li><strong>Right to Delete:</strong> You can request deletion of your personal data (see Section 7.3).</li>
-                        <li><strong>Right to Opt Out of Sale:</strong> We do <strong>not</strong> sell your personal information. There is nothing to opt out of.</li>
+                        <li><strong>Right to Correct:</strong> You can request correction of inaccurate personal data.</li>
+                        <li><strong>Right to Opt Out of Sale or Sharing:</strong> We do <strong>not</strong> sell or share your personal information for advertising or cross-context behavioral targeting. There is nothing to opt out of.</li>
                         <li><strong>Right to Non-Discrimination:</strong> We will not discriminate against you for exercising your rights.</li>
+                        <li><strong>Global Privacy Control (GPC):</strong> We honor Global Privacy Control signals. Because we do not sell or share personal information for advertising purposes, no action is required on our end when we detect a GPC signal — but we want you to know we respect it.</li>
                         <li><strong>Shine the Light:</strong> We do not share personal information with third parties for their direct marketing purposes.</li>
                     </ul>
                     <p><strong>Categories of personal information collected</strong> (per CCPA definitions):</p>
@@ -400,6 +437,7 @@
                         <li>Identifiers (email address, user ID)</li>
                         <li>Geolocation data (approximate, when permitted)</li>
                         <li>Internet or electronic network activity (in-app usage events)</li>
+                        <li>Internet protocol (IP) address (temporarily, for rate limiting only)</li>
                         <li>Inferences (preferences you explicitly set — not inferences we draw)</li>
                     </ul>
                     <p><strong>Categories of personal information sold:</strong> None. Never.</p>
@@ -423,6 +461,7 @@
                             <tr><td>Form submissions</td><td>Consent (you choose to submit)</td></tr>
                             <tr><td>Subscription management</td><td>Contract (processing your purchase)</td></tr>
                             <tr><td>Legal compliance</td><td>Legal obligation</td></tr>
+                            <tr><td>Device integrity verification (App Attest)</td><td>Legitimate interest (security and fraud prevention)</td></tr>
                         </tbody>
                     </table>
 
@@ -437,7 +476,19 @@
 
                     <hr>
 
-                    <h2>11. Changes to This Policy</h2>
+                    <h2>11. Canadian Residents (PIPEDA)</h2>
+                    <p>If you are a Canadian resident, you have rights under the Personal Information Protection and Electronic Documents Act (PIPEDA) and applicable provincial privacy legislation:</p>
+                    <ul>
+                        <li><strong>Right to Access:</strong> You can request a copy of the personal information we hold about you.</li>
+                        <li><strong>Right to Correction:</strong> You can challenge the accuracy of your personal information and request corrections.</li>
+                        <li><strong>Right to Withdraw Consent:</strong> You can withdraw your consent for the collection, use, or disclosure of your personal information at any time, subject to legal or contractual restrictions. Withdrawal may affect your ability to use certain features of the Service.</li>
+                        <li><strong>Right to Complaint:</strong> You have the right to file a complaint with the <strong>Office of the Privacy Commissioner of Canada</strong> if you believe your personal information is being handled in violation of PIPEDA.</li>
+                    </ul>
+                    <p>For privacy inquiries or to exercise your rights, contact us at <a href="mailto:support@sanity-app.com">support@sanity-app.com</a>. We will respond within 30 days.</p>
+
+                    <hr>
+
+                    <h2>12. Changes to This Policy</h2>
                     <p>We may update this Privacy Policy from time to time. When we make material changes:</p>
                     <ul>
                         <li>We will update the "Last Updated" date at the top.</li>
@@ -448,7 +499,7 @@
 
                     <hr>
 
-                    <h2>12. Contact Us</h2>
+                    <h2>13. Contact Us</h2>
                     <p>For privacy questions, data requests, or concerns:</p>
                     <ul>
                         <li><strong>Email:</strong> <a href="mailto:support@sanity-app.com">support@sanity-app.com</a></li>
@@ -457,10 +508,10 @@
 
                     <hr>
 
-                    <h2>13. About the Data We Display</h2>
+                    <h2>14. About the Data We Display</h2>
                     <p>A note about the restaurant inspection data in the App: this information comes from <strong>publicly available city health department records</strong>. We do not collect this data from restaurants directly, and restaurants do not provide us with any information. Our violation severity ratings and health status indicators are our own consumer-focused interpretation of public records — they are not endorsed by or affiliated with any government agency.</p>
 
-                    <p class="legal-footer">This Privacy Policy was last updated on March 18, 2026.</p>
+                    <p class="legal-footer">This Privacy Policy was last updated on April 4, 2026.</p>
                 </div>
             </section>
 
@@ -468,12 +519,12 @@
                 <div class="page-inner legal-content">
                     <h1>Terms of Service</h1>
                     <p class="legal-meta"><strong>Effective Date:</strong> March 18, 2026</p>
-                    <p class="legal-meta"><strong>Last Updated:</strong> March 18, 2026</p>
+                    <p class="legal-meta"><strong>Last Updated:</strong> April 4, 2026</p>
 
                     <hr>
 
                     <h2>1. What This Agreement Covers</h2>
-                    <p>These Terms of Service ("Terms") govern your use of the Sanity mobile application ("App") and related services (collectively, the "Service"). By downloading, installing, or using the App, you agree to these Terms. If you don't agree, don't use the App.</p>
+                    <p>These Terms of Service ("Terms") govern your use of the Sanity mobile application ("App"), the Sanity website at sanity-app.com (the "Website"), and related services (collectively, the "Service"). By downloading, installing, or using the App or Website, you agree to these Terms. If you don't agree, don't use the Service.</p>
                     <p>"We," "us," and "our" refer to Sanity. "You" and "your" refer to you, the user.</p>
 
                     <hr>
@@ -486,6 +537,7 @@
                         <li><strong>Our ratings are our interpretation.</strong> Sanity applies its own severity classifications to public violation data. Our health status indicators (red, orange, yellow, green) reflect our consumer-risk assessment, not the city's official grade. A restaurant with a passing city grade may show warnings in Sanity, and vice versa.</li>
                         <li><strong>Data may be delayed or incomplete.</strong> Inspection records depend on when cities publish their data. There may be a lag between an inspection occurring and it appearing in the App. Not all violations in all cities have the same level of detail.</li>
                         <li><strong>We are not a substitute for your judgment.</strong> Sanity is an informational tool. We do not guarantee the safety, quality, or hygiene of any establishment. Always use your own judgment when deciding where to eat.</li>
+                        <li><strong>We use Apple Maps.</strong> Map display and geocoding in the App are powered by Apple Maps, subject to <a href="https://www.apple.com/legal/internet-services/maps/" target="_blank" rel="noopener">Apple's Maps Terms of Use</a>.</li>
                     </ul>
 
                     <hr>
@@ -498,7 +550,7 @@
                     <h2>4. Your Account</h2>
 
                     <h3>4.1 Creating an Account</h3>
-                    <p>You can create an account using your email address, Apple Sign In, Google Sign In, or Facebook Login. You are responsible for maintaining the security of your account credentials and for all activity under your account.</p>
+                    <p>You can create an account using your email address, Apple Sign In, or Google Sign In. You are responsible for maintaining the security of your account credentials and for all activity under your account.</p>
 
                     <h3>4.2 Account Accuracy</h3>
                     <p>You agree to provide accurate information when creating your account. Don't impersonate others or use false information.</p>
@@ -563,6 +615,7 @@
                         <li>Feedback and suggestions</li>
                         <li>Feature requests</li>
                         <li>City requests (requesting we add a new city)</li>
+                        <li>Support requests (bug reports, questions, account issues)</li>
                         <li>Custom nicknames for pinned establishments</li>
                     </ul>
 
@@ -596,7 +649,7 @@
                         <li><strong>Location data:</strong> Your approximate location (when you grant permission) to show nearby establishments. Location permission is optional — you can browse by selecting a metro area instead.</li>
                         <li><strong>Usage data:</strong> Which establishments and inspections you view, search queries, and general app interactions — used to improve the Service.</li>
                         <li><strong>Preferences:</strong> Your pinned establishments and notification preferences.</li>
-                        <li><strong>Form submissions:</strong> Feedback, feature requests, and city requests you voluntarily submit, including any optional contact information you provide.</li>
+                        <li><strong>Form submissions:</strong> Feedback, feature requests, city requests, and support requests you voluntarily submit, including any contact information you provide.</li>
                         <li><strong>Device information:</strong> Basic device metadata submitted with forms and for troubleshooting.</li>
                     </ul>
 
@@ -623,9 +676,8 @@
                         <li><strong>Supabase</strong> — Database and authentication infrastructure</li>
                         <li><strong>RevenueCat</strong> — Subscription management</li>
                         <li><strong>Stripe</strong> — Payment processing (website purchases)</li>
-                        <li><strong>Apple</strong> — Sign In with Apple, App Store payments, Maps</li>
+                        <li><strong>Apple</strong> — Sign In with Apple, App Store payments, Apple Maps (geocoding and map display, subject to <a href="https://www.apple.com/legal/internet-services/maps/" target="_blank" rel="noopener">Apple Maps Terms of Use</a>)</li>
                         <li><strong>Google</strong> — Google Sign-In</li>
-                        <li><strong>Facebook</strong> — Facebook Login</li>
                     </ul>
 
                     <h3>9.5 Data Retention</h3>
@@ -650,7 +702,9 @@
                     <p>SANITY IS AN INFORMATIONAL TOOL, NOT A HEALTH OR SAFETY SERVICE. WE DO NOT GUARANTEE THE ACCURACY, COMPLETENESS, OR TIMELINESS OF INSPECTION DATA. WE DO NOT GUARANTEE THAT ANY ESTABLISHMENT IS SAFE TO EAT AT, REGARDLESS OF ITS STATUS IN THE APP. A "GREEN" STATUS DOES NOT MEAN AN ESTABLISHMENT IS FREE OF HEALTH RISKS.</p>
 
                     <h3>10.3 Data Accuracy</h3>
-                    <p>We make reasonable efforts to keep data current and accurate, but we depend on city health departments to publish their records. Data may be delayed, incomplete, or contain errors from the source. We are not responsible for inaccuracies in the underlying public data.</p>
+                    <p>We make reasonable efforts to keep data current and accurate, but we depend on city health departments to publish their records. Inspection data is sourced from specific government agencies (e.g., NYC Department of Health and Mental Hygiene, Boston Inspectional Services, Seattle &amp; King County Public Health, etc.) and is only as current as each agency's publication schedule allows.</p>
+                    <p>Sanity's proprietary severity ratings and health status indicators are our <strong>consumer-focused interpretation</strong> of public violation data — they are not official findings, certifications, or endorsements by any government agency. Real-time conditions at any establishment may differ from published inspection records.</p>
+                    <p><strong>Sanity is not health advice.</strong> Our ratings and information should not be relied upon for medical, dietary, or allergy-related decisions. Always use your own judgment and consult appropriate professionals when making decisions that affect your health.</p>
 
                     <h3>10.4 Availability</h3>
                     <p>We do not guarantee uninterrupted or error-free access to the Service. The App may be temporarily unavailable due to maintenance, updates, or circumstances beyond our control.</p>
@@ -689,7 +743,7 @@
                     <h2>14. Termination</h2>
 
                     <h3>14.1 By You</h3>
-                    <p>You can stop using the App at any time. To delete your account, contact us (see Section 17). Uninstalling the App does not automatically delete your account.</p>
+                    <p>You can stop using the App at any time. To delete your account, go to Settings &gt; Account &gt; Delete Account in the App, or contact us at <a href="mailto:support@sanity-app.com">support@sanity-app.com</a> (see Section 17). Deletion requires a two-step confirmation and is immediate. Uninstalling the App does not automatically delete your account.</p>
 
                     <h3>14.2 By Us</h3>
                     <p>We may suspend or terminate your access to the Service at any time, with or without cause, and with or without notice. Reasons may include violation of these Terms, extended inactivity, or discontinuation of the Service.</p>
@@ -732,7 +786,7 @@
                         <li><strong>Email:</strong> <a href="mailto:support@sanity-app.com">support@sanity-app.com</a></li>
                     </ul>
 
-                    <p class="legal-footer">These Terms of Service were last updated on March 18, 2026.</p>
+                    <p class="legal-footer">These Terms of Service were last updated on April 4, 2026.</p>
                 </div>
             </section>
 
