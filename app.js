@@ -1,5 +1,5 @@
 // =============================================
-// Shared utilities
+// Shared utilities — v2
 // =============================================
 function escapeHtml(str) {
     var div = document.createElement('div');
