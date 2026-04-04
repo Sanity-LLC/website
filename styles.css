@@ -2,6 +2,7 @@
 body {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     min-height: 100vh;
+    min-height: 100dvh;
     color: #1a1a1a;
     overflow-x: hidden;
     text-wrap: pretty;
@@ -22,6 +23,7 @@ body {
     position: relative;
     z-index: 1;
     min-height: 100vh;
+    min-height: 100dvh;
     display: flex;
     flex-direction: column;
 }
@@ -801,7 +803,7 @@ a { color: #444; }
 }
 @media (max-width: 500px) {
     #content-column {
-        padding-top: 0;
+        padding-top: 16px;
     }
     nav {
         padding-bottom: 16px;
