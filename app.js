@@ -421,6 +421,7 @@ var ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJ
         container.innerHTML = '';
         cities.forEach(function (city) {
             var code = city.jurisdiction_code;
+            if (code === 'austin') return; // Austin is score-only — rendered as ghost tile below
             var name = DISPLAY_NAMES[code] || city.display_name;
             var safeName = escapeHtml(name);
             var total = city.total_establishments;
