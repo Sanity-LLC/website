@@ -801,7 +801,10 @@ a { color: #444; }
 }
 @media (max-width: 500px) {
     #content-column {
-        padding-top: 2vh;
+        padding-top: 0;
+    }
+    nav {
+        padding-bottom: 16px;
     }
     .fun-fact-card {
         flex-direction: column;
