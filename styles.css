@@ -353,6 +353,7 @@ a { color: #444; }
 .ghost-tile .ghost-cta {
     font-size: 0.75rem;
     color: rgba(128, 128, 128, 0.5);
+    text-align: center;
 }
 .ghost-tile .ghost-cta a {
     color: rgba(128, 128, 128, 0.5);
@@ -799,6 +800,9 @@ a { color: #444; }
     font-weight: 500;
 }
 @media (max-width: 500px) {
+    #content-column {
+        padding-top: 2vh;
+    }
     .fun-fact-card {
         flex-direction: column;
         text-align: center;
