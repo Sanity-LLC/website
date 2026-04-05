@@ -9,6 +9,17 @@ function escapeHtml(str) {
 function escapeAttr(str) {
     return str.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/'/g, '&#39;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 }
+function sanitizeInput(str) {
+    if (typeof str !== 'string') return '';
+    return str
+        .trim()
+        .replace(/<[^>]*>/g, '')
+        .replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/g, '')
+        .replace(/\s{2,}/g, ' ');
+}
+function enforceMaxLength(str, max) {
+    return str.length > max ? str.slice(0, max) : str;
+}
 
 // Shared Supabase anonymous key (public, protected by RLS)
 var ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVtYWR1dWhhd3FiY2R2dGltbmpvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQ1MTAxMTAsImV4cCI6MjA3MDA4NjExMH0.4c5yRD8_gn9qbn483cbI7Pqukwhyei7e0evt8ELqWG0';
@@ -648,7 +659,7 @@ var openRequestModal;
     }
 
     submitBtn.addEventListener('click', function () {
-        var cityRaw = cityInput.value.trim();
+        var cityRaw = enforceMaxLength(sanitizeInput(cityInput.value), 100);
         if (!cityRaw) return;
         if (!validate()) return;
 
@@ -669,9 +680,9 @@ var openRequestModal;
         var parts = cityRaw.split(',').map(function (s) { return s.trim(); });
         var content = { city: parts[0] };
         if (parts.length > 1 && parts[1]) content.state = parts[1];
-        var email = emailInput.value.trim();
+        var email = enforceMaxLength(sanitizeInput(emailInput.value), 254);
         if (email) content.email = email;
-        var phoneDigits = phoneInput.value.replace(/\D/g, '');
+        var phoneDigits = phoneInput.value.replace(/\D/g, '').slice(0, 10);
         if (phoneDigits) content.phone = phoneDigits;
 
         fetch(SUBMIT_URL, {
@@ -704,6 +715,7 @@ var openRequestModal;
     var submitTimestamps = [];
     var RATE_LIMIT = 5;
     var RATE_WINDOW = 5 * 60 * 1000; // 5 minutes
+    var VALID_CATEGORIES = ['bug_report', 'feature_request', 'general_question', 'account_issue'];
 
     var formView = document.getElementById('support-form-view');
     var successView = document.getElementById('support-success-view');
@@ -777,9 +789,11 @@ var openRequestModal;
         submitBtn.disabled = true;
         submitBtn.textContent = 'Sending...';
 
-        var category = categorySelect.value || 'general_question';
-        var email = emailInput.value.trim();
-        var message = messageInput.value.trim();
+        var category = VALID_CATEGORIES.indexOf(categorySelect.value) !== -1
+            ? categorySelect.value
+            : 'general_question';
+        var email = enforceMaxLength(sanitizeInput(emailInput.value), 254);
+        var message = enforceMaxLength(sanitizeInput(messageInput.value), 5000);
 
         fetch(SUBMIT_URL, {
             method: 'POST',
