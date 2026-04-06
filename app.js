@@ -508,15 +508,24 @@ var ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJ
             openRequestModal();
         });
 
-        // Faded ghost tiles (bottom row)
+        // Faded bottom row (Toronto + ghost tile with fade gradient)
         var fadeWrap = document.createElement('div');
         fadeWrap.className = 'ghost-fade-wrap';
-        for (var gi = 0; gi < 2; gi++) {
-            var fadedGhost = document.createElement('div');
-            fadedGhost.className = 'ghost-tile';
-            fadedGhost.innerHTML = '<span class="ghost-label">Coming Soon</span>';
-            fadeWrap.appendChild(fadedGhost);
-        }
+
+        var torontoGhost = document.createElement('div');
+        torontoGhost.className = 'city-tile coming-soon';
+        torontoGhost.innerHTML =
+            '<div class="city-header"><h2>Toronto</h2></div>' +
+            '<div class="city-total">17,923 establishments</div>' +
+            '<div class="health-bar"><span style="flex-grow:1;border-radius:3px"></span></div>' +
+            '<div class="violations-header">Coming Soon...</div>';
+        fadeWrap.appendChild(torontoGhost);
+
+        var fadedGhost = document.createElement('div');
+        fadedGhost.className = 'ghost-tile';
+        fadedGhost.innerHTML = '<span class="ghost-label">Coming Soon</span>';
+        fadeWrap.appendChild(fadedGhost);
+
         container.appendChild(fadeWrap);
 
         // Social links
