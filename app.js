@@ -153,28 +153,6 @@ var ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJ
         reveal.style.clipPath = 'circle(0px at ' + pos + ')';
     });
 
-    // Open coming soon modal on click
-    var comingSoonModal = document.getElementById('coming-soon-modal');
-    var comingSoonCancel = document.getElementById('coming-soon-cancel');
-
-    wrap.addEventListener('click', function (e) {
-        e.preventDefault();
-        comingSoonModal.classList.add('visible');
-    });
-
-    comingSoonCancel.addEventListener('click', function () {
-        comingSoonModal.classList.remove('visible');
-    });
-
-    comingSoonModal.addEventListener('click', function (e) {
-        if (e.target === comingSoonModal) comingSoonModal.classList.remove('visible');
-    });
-
-    document.addEventListener('keydown', function (e) {
-        if (e.key === 'Escape' && comingSoonModal.classList.contains('visible')) {
-            comingSoonModal.classList.remove('visible');
-        }
-    });
 })();
 
 // =============================================
