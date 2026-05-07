@@ -30,7 +30,8 @@ var ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJ
 (function () {
     var isNavigating = false;
     var FADE_DURATION = 400; // ms, matches CSS transition
-    var VALID_PAGES = ['home', 'about', 'faq', 'contact', 'privacy', 'terms'];
+    // 'faq' temporarily hidden — restore by adding back to the array
+    var VALID_PAGES = ['home', 'about', 'contact', 'privacy', 'terms'];
 
     function navigateTo(pageName, pushState) {
         if (isNavigating) return;
