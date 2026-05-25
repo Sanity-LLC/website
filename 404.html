@@ -143,7 +143,7 @@
                 <div class="page-inner legal-content">
                     <h1>Privacy Policy</h1>
                     <p class="legal-meta"><strong>Effective Date:</strong> March 18, 2026</p>
-                    <p class="legal-meta"><strong>Last Updated:</strong> May 2, 2026</p>
+                    <p class="legal-meta"><strong>Last Updated:</strong> May 25, 2026</p>
 
                     <div class="legal-summary">
                         <p><strong>The Short Version</strong></p>
@@ -199,19 +199,19 @@
                     <strong>Notes:</strong> Your pins, preferences, and sensitivity settings are private to your account. They are never shared with other users, establishments, or third parties. Push notification tokens are encrypted at rest using AES-256-GCM before storage. The token is specific to this app — it cannot be used to track you across other apps or identify your device. We store a one-way hash (SHA-256) of the token for deduplication; the original token is only decrypted in memory when sending a notification.</p>
 
                     <h3>2.4 Usage Data</h3>
-                    <p><strong>What:</strong> We track three types of in-app events:</p>
+                    <p><strong>What:</strong> We track two broad categories of in-app events:</p>
                     <ul>
-                        <li><strong>Establishment views</strong> — which restaurant you viewed (establishment ID, name, city)</li>
-                        <li><strong>Inspection views</strong> — which inspection you viewed (establishment ID, inspection ID, name)</li>
-                        <li><strong>Search queries</strong> — what you searched for, how many results were returned, and which city</li>
+                        <li><strong>Onboarding &amp; sign-in events</strong> — app launches, onboarding screen progression, paywall views, location and notification permission decisions, and sign-in attempts. Used to understand where new users get stuck before they have an account.</li>
+                        <li><strong>Post-auth product events</strong> — establishment views (establishment ID, name, city), inspection views (establishment ID, inspection ID, name), and search queries (what you searched, how many results, which city).</li>
                     </ul>
-                    <p><strong>When:</strong> As you browse and search within the App<br>
-                    <strong>Why:</strong> To understand which features are used, improve search quality, and identify data gaps (e.g., a city where users frequently search but we have poor coverage)</p>
+                    <p><strong>When:</strong> Onboarding events fire from first app launch. Post-auth product events fire as you browse and search after signing in.<br>
+                    <strong>Why:</strong> To understand where users drop off in onboarding, improve search quality, and identify data gaps (e.g., a city where users frequently search but we have poor coverage)</p>
                     <ul>
-                        <li>Usage data is tied to your authenticated account (user ID) — it is not collected anonymously.</li>
-                        <li>If you use the App without signing in, no usage events are sent at all.</li>
-                        <li>We do <strong>not</strong> track: screens visited, time spent, scroll behavior, tap heatmaps, or any interactions outside the three events listed above.</li>
+                        <li><strong>Pre-auth events are anonymous.</strong> Before you sign in, events are keyed to a random per-install identifier (a "device key") — not your name, email, phone, or any hardware ID. If you create or sign in to an account, we associate that device key with your user ID so we can stitch your onboarding journey to your account. If you never sign in, the device key is never linked to an identity.</li>
+                        <li>Post-auth events are tied to your authenticated account (user ID).</li>
+                        <li>We do <strong>not</strong> track: screens visited outside the events listed, time spent, scroll behavior, tap heatmaps, or any interactions outside the events listed above.</li>
                         <li>Usage tracking is completely disabled in development/debug builds.</li>
+                        <li>You can opt out of usage event collection at any time — see Section 7.5.</li>
                     </ul>
 
                     <h3>2.5 Form Submissions</h3>
@@ -275,7 +275,7 @@
                         <li><strong>No advertising identifiers (IDFA)</strong></li>
                         <li><strong>No device fingerprinting</strong></li>
                         <li><strong>No cookies</strong> (neither the App nor the Website uses cookies)</li>
-                        <li><strong>No IP address logging for analytics purposes</strong> — however, IP addresses are temporarily logged for rate limiting and abuse prevention on our Website and public API endpoints (see Section 2.9)</li>
+                        <li><strong>No IP address logging for analytics purposes</strong> — however, IP addresses are temporarily logged for rate limiting and abuse prevention on our Website and public API endpoints (see Section 2.10)</li>
                         <li><strong>No biometric data</strong></li>
                     </ul>
 
@@ -287,6 +287,17 @@
                         <li>Rate limit logs are <strong>automatically cleaned</strong> as part of each rate limit check. Entries older than the rate limit window (typically under 5 minutes) are deleted.</li>
                         <li>We do <strong>not</strong> use IP addresses for analytics, tracking, identification, or any purpose other than rate limiting.</li>
                         <li>IP addresses are <strong>not</strong> linked to your user account.</li>
+                    </ul>
+
+                    <h3>2.11 Session Replay</h3>
+                    <p><strong>What:</strong> Recordings of your interactions with the App — taps, navigation, and which screens you visit — captured for a sampled subset of sessions.<br>
+                    <strong>When:</strong> During active App use, on a sampled basis (not every session)<br>
+                    <strong>Why:</strong> To diagnose crashes and usability issues we couldn't reproduce from event data alone</p>
+                    <ul>
+                        <li><strong>Text input is masked.</strong> Anything you type — search queries, custom pin nicknames, email addresses, support messages — is replaced with placeholders in the replay. We never see your raw keystrokes.</li>
+                        <li>Replays do <strong>not</strong> capture: photos, camera frames, microphone audio, contacts, clipboard contents, or content from other apps.</li>
+                        <li>Replays are processed by PostHog (see Section 4.2) and are subject to the opt-out in Section 7.5.</li>
+                        <li>Session replay is completely disabled in development/debug builds.</li>
                     </ul>
 
                     <hr>
@@ -306,6 +317,8 @@
                             <tr><td>Device integrity data</td><td>Prevent unauthorized access, protect proprietary data</td></tr>
                             <tr><td>IP addresses</td><td>Rate limiting and abuse prevention (automatically cleaned)</td></tr>
                             <tr><td>Push notification tokens</td><td>Deliver inspection update notifications for your pinned establishments</td></tr>
+                            <tr><td>Session replays (sampled)</td><td>Diagnose usability issues and crash conditions</td></tr>
+                            <tr><td>Pre-auth device key</td><td>Stitch onboarding events to your account when you sign in</td></tr>
                         </tbody>
                     </table>
                     <p>We do <strong>not</strong> use your data for:</p>
@@ -335,6 +348,7 @@
                             <tr><td><strong>RevenueCat</strong></td><td>Subscription status, purchase receipts</td><td>Subscription management (subscription events are synced to our database to enable features like trial-ending notifications)</td></tr>
                             <tr><td><strong>Apple</strong></td><td>Account info (Sign In with Apple), payment info (App Store purchases), map tiles, device attestation, push notification delivery (APNs)</td><td>Authentication, payments, maps, device integrity verification, notifications</td></tr>
                             <tr><td><strong>Google</strong></td><td>Account info (Google Sign-In)</td><td>Authentication</td></tr>
+                            <tr><td><strong>PostHog</strong></td><td>Anonymous device key, user ID (post-auth), in-app event metadata, sampled session replays (with text input masked)</td><td>Product analytics, onboarding funnel analysis, usability diagnostics (processed in PostHog Cloud, US region)</td></tr>
                         </tbody>
                     </table>
 
@@ -361,7 +375,7 @@
                         <li><strong>Row-Level Security (RLS):</strong> Database policies ensure users can only access their own data. Your pins, preferences, events, and account information are isolated from other users at the database level.</li>
                         <li><strong>Authentication:</strong> Secure JWT-based authentication with token expiration and refresh.</li>
                         <li><strong>Access control:</strong> The website uses Supabase anonymous keys for public form submissions. Service-level keys with elevated privileges are never exposed to client applications. Administrative access is restricted.</li>
-                        <li><strong>Rate limiting:</strong> API endpoints are rate-limited to prevent abuse. Limits vary by endpoint and are enforced per-device, per-user, or per-IP address depending on the authentication method. Rate limit data is automatically cleaned (see Section 2.9).</li>
+                        <li><strong>Rate limiting:</strong> API endpoints are rate-limited to prevent abuse. Limits vary by endpoint and are enforced per-device, per-user, or per-IP address depending on the authentication method. Rate limit data is automatically cleaned (see Section 2.10).</li>
                     </ul>
 
                     <h3>5.3 What We Can't Guarantee</h3>
@@ -380,12 +394,15 @@
                             <tr><td>Sensitivity settings</td><td>Until you delete your account</td></tr>
                             <tr><td>Usage events</td><td>Until you delete your account</td></tr>
                             <tr><td>Form submissions</td><td>Until you delete your account</td></tr>
-                            <tr><td>Push notification tokens</td><td>Until you disable notifications or delete your account; invalidated tokens cleaned up within 90 days</td></tr>
+                            <tr><td>Push notification tokens</td><td>Until you disable notifications, delete your account, or Apple invalidates the token. Invalidated tokens are cleaned up after 90 days.</td></tr>
+                            <tr><td>Delivered notification records</td><td>Automatically deleted after 30 days</td></tr>
                             <tr><td>Subscription status</td><td>Until you delete your account</td></tr>
                             <tr><td>Authentication tokens</td><td>Expire automatically; refreshed on active use</td></tr>
                             <tr><td>Device integrity data</td><td>Until the app installation is no longer active or the key is revoked</td></tr>
                             <tr><td>Rate limit logs (IP addresses)</td><td>Automatically deleted after the rate limit window expires (typically under 5 minutes)</td></tr>
-                            <tr><td>Push notification tokens</td><td>Until you disable notifications, delete your account, or Apple invalidates the token. Invalidated tokens are cleaned up after 90 days. Delivered notification records are deleted after 30 days.</td></tr>
+                            <tr><td>Usage events (PostHog)</td><td>Retained on PostHog Cloud for our analytics window. Deleted when you delete your account.</td></tr>
+                            <tr><td>Session replays</td><td>Retained on PostHog Cloud for our analytics window, then auto-purged. Deleted on account deletion.</td></tr>
+                            <tr><td>Pre-auth device key</td><td>Replaced or anonymized on account deletion. If you never sign in, the device key is not tied to any identity.</td></tr>
                         </tbody>
                     </table>
                     <p>When you delete your account:</p>
@@ -415,7 +432,7 @@
                     <p>You can request your data in a structured, machine-readable format.</p>
 
                     <h3>7.5 Opt Out of Usage Tracking</h3>
-                    <p>If you would like us to stop collecting usage events (establishment views, inspection views, search queries) while continuing to use the App, contact us and we will disable tracking for your account.</p>
+                    <p>If you would like us to stop collecting usage events (onboarding events, establishment views, inspection views, search queries) and session replays while continuing to use the App, contact us and we will disable tracking for your account.</p>
 
                     <h3>7.6 Withdraw Consent</h3>
                     <p>You can withdraw consent for optional data collection (e.g., location) at any time through your device's Settings app. This does not affect data collected before withdrawal.</p>
@@ -446,9 +463,9 @@
                     </ul>
                     <p><strong>Categories of personal information collected</strong> (per CCPA definitions):</p>
                     <ul>
-                        <li>Identifiers (email address, user ID, push notification device tokens — encrypted, app-specific, not used for tracking)</li>
+                        <li>Identifiers (email address, user ID, push notification device tokens — encrypted, app-specific, not used for tracking — and an anonymous per-install device key)</li>
                         <li>Geolocation data (approximate, when permitted)</li>
-                        <li>Internet or electronic network activity (in-app usage events)</li>
+                        <li>Internet or electronic network activity (in-app usage events, sampled session replays)</li>
                         <li>Internet protocol (IP) address (temporarily, for rate limiting only)</li>
                         <li>Inferences (preferences you explicitly set — not inferences we draw)</li>
                     </ul>
@@ -470,6 +487,7 @@
                             <tr><td>Pins, preferences, and personalization</td><td>Contract (core app functionality)</td></tr>
                             <tr><td>Location-based search</td><td>Consent (you grant permission via device settings)</td></tr>
                             <tr><td>Usage event tracking</td><td>Legitimate interest (improving the Service)</td></tr>
+                            <tr><td>Session replay (sampled)</td><td>Legitimate interest (diagnosing usability and crashes)</td></tr>
                             <tr><td>Form submissions</td><td>Consent (you choose to submit)</td></tr>
                             <tr><td>Subscription management</td><td>Contract (processing your purchase)</td></tr>
                             <tr><td>Legal compliance</td><td>Legal obligation</td></tr>
@@ -524,7 +542,7 @@
                     <h2>14. About the Data We Display</h2>
                     <p>A note about the restaurant inspection data in the App: this information comes from <strong>publicly available city health department records</strong>. We do not collect this data from restaurants directly, and restaurants do not provide us with any information. Our violation severity ratings and health status indicators are our own consumer-focused interpretation of public records — they are not endorsed by or affiliated with any government agency.</p>
 
-                    <p class="legal-footer">This Privacy Policy was last updated on April 12, 2026.</p>
+                    <p class="legal-footer">This Privacy Policy was last updated on May 25, 2026.</p>
                 </div>
             </section>
 
@@ -532,7 +550,7 @@
                 <div class="page-inner legal-content">
                     <h1>Terms of Service</h1>
                     <p class="legal-meta"><strong>Effective Date:</strong> March 18, 2026</p>
-                    <p class="legal-meta"><strong>Last Updated:</strong> May 2, 2026</p>
+                    <p class="legal-meta"><strong>Last Updated:</strong> May 25, 2026</p>
 
                     <hr>
 
@@ -664,13 +682,14 @@
                         <li><strong>Account information:</strong> Email address (from registration or social sign-in)</li>
                         <li><strong>Location data:</strong> Your approximate location (when you grant permission) to show nearby establishments. Location permission is optional — you can browse by selecting a metro area instead.</li>
                         <li><strong>Usage data:</strong> Which establishments and inspections you view, search queries, and general app interactions — used to improve the Service.</li>
+                        <li><strong>Anonymous onboarding events:</strong> Before you sign in, we collect a small set of events tied to a random per-install device key to understand where new users get stuck. These are linked to your account if and when you sign in.</li>
+                        <li><strong>Sampled session replays:</strong> Recordings of taps and navigation for a sampled subset of sessions, with text input masked, used to diagnose usability issues and crashes.</li>
                         <li><strong>Preferences:</strong> Your pinned establishments, notification preferences, and sensitivity settings (your customized violation severity preferences).</li>
-                        <li><strong>Push notification tokens:</strong> An encrypted device identifier used to deliver push notifications when your pinned establishments receive new inspections.</li>
+                        <li><strong>Push notification tokens:</strong> An encrypted, app-specific device token used to deliver inspection update notifications for your pinned establishments. Requires your explicit permission.</li>
                         <li><strong>Device security verification:</strong> A cryptographic key generated by Apple's App Attest framework to verify that requests come from genuine copies of the Sanity app.</li>
                         <li><strong>Subscription status:</strong> Your current subscription state and expiration date, synced from Apple via RevenueCat.</li>
                         <li><strong>Form submissions:</strong> Feedback, feature requests, city requests, and support requests you voluntarily submit, including any contact information you provide.</li>
                         <li><strong>Device information:</strong> Basic device metadata submitted with forms and for troubleshooting.</li>
-                        <li><strong>Push notification tokens:</strong> An encrypted, app-specific device token used to deliver inspection update notifications for your pinned establishments. Requires your explicit permission.</li>
                     </ul>
 
                     <h3>9.2 How We Use Your Data</h3>
@@ -697,6 +716,7 @@
                         <li><strong>RevenueCat</strong> — Subscription management</li>
                         <li><strong>Apple</strong> — Sign In with Apple, App Store payments, Apple Maps (geocoding and map display, subject to <a href="https://www.apple.com/legal/internet-services/maps/" target="_blank" rel="noopener">Apple Maps Terms of Use</a>), push notification delivery (APNs)</li>
                         <li><strong>Google</strong> — Google Sign-In</li>
+                        <li><strong>PostHog</strong> — Product analytics and sampled session replay (text input masked, processed in PostHog Cloud US)</li>
                     </ul>
 
                     <h3>9.5 Data Retention</h3>
@@ -805,12 +825,11 @@
                         <li><strong>Email:</strong> <a href="mailto:support@sanity-app.com">support@sanity-app.com</a></li>
                     </ul>
 
-                    <p class="legal-footer">These Terms of Service were last updated on April 12, 2026.</p>
+                    <p class="legal-footer">These Terms of Service were last updated on May 25, 2026.</p>
                 </div>
             </section>
 
         </div>
-
 
         <!-- City request modal -->
         <div class="modal-backdrop" id="request-modal">
