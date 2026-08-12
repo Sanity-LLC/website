@@ -143,7 +143,7 @@
                 <div class="page-inner legal-content">
                     <h1>Privacy Policy</h1>
                     <p class="legal-meta"><strong>Effective Date:</strong> March 18, 2026</p>
-                    <p class="legal-meta"><strong>Last Updated:</strong> July 23, 2026</p>
+                    <p class="legal-meta"><strong>Last Updated:</strong> August 11, 2026</p>
 
                     <div class="legal-summary">
                         <p><strong>The Short Version</strong></p>
@@ -206,14 +206,14 @@
                     <p><strong>What:</strong> We track two broad categories of in-app events:</p>
                     <ul>
                         <li><strong>Onboarding &amp; conversion events</strong> — app launches, onboarding screen progression and how long each screen is on screen, paywall views and purchase/restore outcomes, location and notification permission decisions, and sign-in attempts. Used to understand where new users get stuck before they have an account.</li>
-                        <li><strong>Product-interaction events</strong> — establishment views (establishment ID, name, city), inspection views (establishment ID, inspection ID, name), search queries and filters (what you searched, how many results, which city), city selection, adding or removing an establishment from your watchlist, gut-check responses (your own severity assessments), and Today-feed interactions (opening the feed, tapping an item, or opening the App from a feed notification).</li>
+                        <li><strong>Product-interaction events</strong> — establishment views (establishment ID, name, city), inspection views (establishment ID, inspection ID, name), search queries and filters (what you searched, how many results, which city), city selection, adding or removing an establishment from your watchlist, gut-check responses (your own severity assessments), Today-feed interactions (opening the feed, tapping an item, or opening the App from a feed notification), and which screens you open and which labeled on-screen controls you tap (each identified by a fixed element label — e.g. a button's name — never by pixel coordinates).</li>
                     </ul>
                     <p><strong>When:</strong> Onboarding events fire from first app launch. Product-interaction events fire as you browse, search, and use the App after signing in.<br>
                     <strong>Why:</strong> To understand where users drop off in onboarding, improve search quality, and identify data gaps (e.g., a city where users frequently search but we have poor coverage)</p>
                     <ul>
                         <li><strong>Pre-auth events are anonymous.</strong> Before you sign in, events are keyed to a random per-install identifier (a "device key") — not your name, email, phone, or any hardware ID. If you create or sign in to an account, we associate that device key with your user ID so we can stitch your onboarding journey to your account. If you never sign in, the device key is never linked to an identity.</li>
                         <li>Product-interaction events are tied to your authenticated account (user ID).</li>
-                        <li>We collect these product and onboarding interactions to improve the App — not to build an advertising profile. We do <strong>not</strong> track: keystrokes or the raw text you type (text is masked in session replays — see Section 2.11), scroll behavior, tap heatmaps, or any activity outside the App. We do measure how long certain screens are open — for onboarding and gate screens, so we can see where people stall — and that measurement excludes time the App spends in the background.</li>
+                        <li>We collect these product and onboarding interactions to improve the App — not to build an advertising profile. We do <strong>not</strong> track: keystrokes or the raw text you type (text is masked in session replays — see Section 2.11), scroll behavior, tap heatmaps (we log that you tapped a specific labeled control, but never a coordinate-level map of where you touch the screen), or any activity outside the App. We do measure how long certain screens are open — for onboarding and gate screens, so we can see where people stall — and that measurement excludes time the App spends in the background.</li>
                         <li>Usage tracking is completely disabled in development/debug builds.</li>
                         <li>You can opt out of usage event collection at any time — see Section 7.5.</li>
                     </ul>
@@ -245,7 +245,7 @@
 
                     <h3>2.7 Push Notification Tokens</h3>
                     <p><strong>What:</strong> A device-specific token issued by Apple's Push Notification service (APNs) that identifies your device for notification delivery<br>
-                    <strong>When:</strong> When you enable push notifications in the App<br>
+                    <strong>When:</strong> When you enable push notifications in the App. We may prompt you to allow notifications at the start of your free trial, and again when you first watch an establishment — granting them is optional in either case.<br>
                     <strong>Why:</strong> To deliver alerts when establishments on your watchlist receive new health inspections; to send notifications about your selected city's daily inspection results — a "today's inspections are in" notification, a follow-up reminder if you haven't opened the feed, and an update if more inspections are published later the same day; and to notify you about important subscription events (such as trial reminders and, if you cancel, win-back offers)</p>
                     <ul>
                         <li>Push notification tokens are <strong>encrypted at rest</strong> on our servers using AES-256-GCM encryption.</li>
@@ -580,7 +580,7 @@
                     <h2>14. About the Data We Display</h2>
                     <p>A note about the restaurant inspection data in the App: this information comes from <strong>publicly available city health department records</strong>. We do not collect this data from restaurants directly, and restaurants do not provide us with any information. Our violation severity ratings and health status indicators are our own consumer-focused interpretation of public records — they are not endorsed by or affiliated with any government agency.</p>
 
-                    <p class="legal-footer">This Privacy Policy was last updated on July 23, 2026.</p>
+                    <p class="legal-footer">This Privacy Policy was last updated on August 11, 2026.</p>
                 </div>
             </section>
 
@@ -588,7 +588,7 @@
                 <div class="page-inner legal-content">
                     <h1>Terms of Service</h1>
                     <p class="legal-meta"><strong>Effective Date:</strong> March 18, 2026</p>
-                    <p class="legal-meta"><strong>Last Updated:</strong> July 23, 2026</p>
+                    <p class="legal-meta"><strong>Last Updated:</strong> August 11, 2026</p>
 
                     <hr>
 
@@ -632,7 +632,7 @@
                     <h3>4.1 Creating an Account</h3>
                     <p>Both a subscription and an account are required to use the App. A subscription is required to access the App (see Section 5), and after you subscribe you must create an account or sign in before you can enter the App. An account also lets you build a watchlist, sync preferences across devices, receive push notifications, and save per-violation severity overrides.</p>
                     <p>You can create an account using your email address, Apple Sign In, or Google Sign In. If you sign up with an email address, we will send a confirmation code to that address to verify it, and you can reset a forgotten password using a recovery code sent the same way. You are responsible for maintaining the security of your account credentials and for all activity under your account.</p>
-                    <p>The Watchlist requires notification permission. Watching an establishment exists to alert you when it is re-inspected, so if you decline or turn off notifications, the Watchlist is unavailable until you enable them. The rest of the App is unaffected.</p>
+                    <p>The Watchlist requires notification permission. Watching an establishment exists to alert you when it is re-inspected, so if you decline or turn off notifications, the Watchlist is unavailable until you enable them. The rest of the App is unaffected. We may also prompt you to allow notifications at the start of your free trial; granting them is optional.</p>
 
                     <h3>4.2 Account Accuracy</h3>
                     <p>You agree to provide accurate information when creating your account. Don't impersonate others or use false information.</p>
@@ -869,7 +869,7 @@
                         <li><strong>Email:</strong> <a href="mailto:support@sanity-app.com">support@sanity-app.com</a></li>
                     </ul>
 
-                    <p class="legal-footer">These Terms of Service were last updated on July 23, 2026.</p>
+                    <p class="legal-footer">These Terms of Service were last updated on August 11, 2026.</p>
                 </div>
             </section>
 
