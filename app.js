@@ -161,11 +161,19 @@ var ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJ
 // =============================================
 (function () {
     var API_URL = 'https://emaduuhawqbcdvtimnjo.supabase.co/functions/v1/get-city-dashboard';
+    // Mirrors ConsumerConcernIcons.label(for:) in the iOS app (taxonomy v2, 12 types)
     var VIOLATION_LABELS = {
         rodents: 'Rodents', pests: 'Pests', bacterial: 'Bacterial',
-        chemical: 'Chemical', mold: 'Mold', temperature: 'Temperature',
-        improper_storage: 'Improper Storage', documentation: 'Documentation'
+        hygiene: 'Hygiene', chemical: 'Chemical', mold: 'Mold',
+        spoiled_product: 'Spoiled', temperature: 'Temperature',
+        improper_storage: 'Improper Storage', facility_cleanliness: 'Cleanliness',
+        facility_maintenance: 'Repairs', documentation: 'Documentation'
     };
+    // Unknown future categories: "some_type" → "Some Type" (matches the app's default)
+    function violationLabel(key) {
+        if (VIOLATION_LABELS[key]) return VIOLATION_LABELS[key];
+        return escapeHtml(key.replace(/_/g, ' ').replace(/\b\w/g, function (c) { return c.toUpperCase(); }));
+    }
     // Metro coverage tooltips (from MetropolitanArea.areaDescription in iOS app)
     var AREA_INFO = {
         'nyc': 'Manhattan, Brooklyn, Queens & more',
@@ -330,15 +338,22 @@ var ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJ
         });
     }
 
+    // Severity tiers each category actually lands in (red = critical/high,
+    // orange = medium, yellow = low). Tiers under ~1% of a category's flags are
+    // omitted. Measured on on-map establishments, 2026-10-06 (taxonomy v2).
     var SEVERITY_COLORS = {
         pests: ['#EB5757'],
         rodents: ['#EB5757'],
         mold: ['#EB5757'],
         chemical: ['#F2994B', '#EB5757'],
+        spoiled_product: ['#F2994B', '#EB5757'],
+        bacterial: ['#F2994B', '#EB5757'],
+        temperature: ['#F2994B', '#EB5757'],
+        hygiene: ['#F2C94C', '#EB5757', '#F2994B'],
         improper_storage: ['#F2C94C', '#EB5757', '#F2994B'],
-        bacterial: ['#F2C94C', '#EB5757', '#F2994B'],
-        temperature: ['#F2C94C', '#EB5757', '#F2994B'],
-        documentation: ['#F2C94C', '#EB5757', '#F2994B']
+        documentation: ['#F2C94C', '#F2994B'],
+        facility_cleanliness: ['#F2C94C', '#F2994B'],
+        facility_maintenance: ['#F2C94C', '#F2994B']
     };
 
     function initViolationTagHovers() {
@@ -428,7 +443,7 @@ var ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJ
             var sorted = Object.keys(vc).sort(function (a, b) { return vc[b] - vc[a]; });
             var tags = sorted.map(function (key) {
                 var safeKey = escapeAttr(key);
-                var label = VIOLATION_LABELS[key] || escapeHtml(key);
+                var label = violationLabel(key);
                 var countStr = Number(vc[key]).toLocaleString();
                 var innerHtml = '<span class="vcount">' + countStr + '</span> ' + label;
                 return '<span class="violation-tag" data-vtype="' + safeKey + '">' +
